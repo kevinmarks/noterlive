@@ -13,6 +13,7 @@ function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
     document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +getSpeakerHTML() + document.note.quote.value;
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
+    document.getElementById("tweet").src='/sendtweet?status='+escape(document.note.composed.value);
     document.note.quote.value = "";
     
 }
@@ -20,8 +21,8 @@ function postit() {
 </head>
 <body>
 <h1>Noter Live</h1>
-<p>a web app to make live tweeting easier. by Kevin Marks. Currently vey ugly and semi-functional
-<a href="/auth/twitter" >Login with twitter</a>
+<a href="/auth/twitter" >Login with Twitter</a>
+<p>a web app to make live tweeting easier. by Kevin Marks. Currently very ugly and semi-functional
 <form name="note" >
   #<input name="hashtag" value="#indiewebcamp">
   <br>
@@ -40,5 +41,6 @@ function postit() {
 <br><textarea id="blogpost"></textarea>
 </form>
 <div id="preview"> </div>
+<iframe id="tweet" src="/showuser" seamless></iframe>
 </body>
 </html>

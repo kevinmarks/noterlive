@@ -64,7 +64,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
           req.session.oauth.access_token = oauth_access_token;
           req.session.oauth.access_token_secret = oauth_access_token_secret;
           console.log(results, req.session.oauth);
-          res.send("Authenticated ");
+          //res.send("Authenticated <a href='/showuser'>as</a>");
           twitter.setAuth ( 
                 consumerKey,
                 consumerSecret, 
@@ -74,8 +74,11 @@ app.get('/auth/twitter/callback', function(req, res, next) {
 
             twitter.get( 'account/verify_credentials', { skip_status: true }, function( user, error, status ){
                 console.log( user ? 'Authenticated as @'+user.screen_name : 'Not authenticated' );
+               req.session.user = user;
+               //console.log(req.session);
+               //res.send("Logged in as @"+user.screen_name);
+               res.redirect('/'); 
             } );
-          //res.redirect('/'); // You might actually want to redirect!
         }
       }
     );
@@ -85,6 +88,24 @@ app.get('/auth/twitter/callback', function(req, res, next) {
   }
  
 });
+
+app.get('/sendtweet', function(req, res, next) {
+    console.log("sendtweet: " + req.query.status);
+    twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
+                console.log( tweet ? 'posted as @'+tweet.user.screen_name : 'Not authenticated' );               
+               res.send(tweet ? "<a href='https://twitter.com/" +tweet.user.screen_name+"/status/"+
+                    tweet.id_str+"'>"+tweet.text+"</a>":"<a href='/auth/twitter'>login first</a>");
+            } );
+});
+
+app.get('/showuser', function(req, res, next) {
+    if (req.session.user) {
+        res.send("<img src='" +req.session.user.profile_image_url + "'> logged in as @"+req.session.user.screen_name);
+    } else {
+         res.send("not logged in");
+    }
+});
+
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
