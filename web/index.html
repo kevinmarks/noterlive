@@ -1,6 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head><title>Noter Live</title>
+<script>
+function noteit() {
+    document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
+    document.getElementById("charcount").innerHTML = document.note.composed.value.length;
+}
+function getSpeakerHTML() {
+    return "<a href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
+}
+function postit() {
+    document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
+    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +getSpeakerHTML() + document.note.quote.value;
+    document.getElementById("preview").innerHTML = document.note.blogpost.value;
+    document.note.quote.value = "";
+    
+}
+</script>
+</head>
 <body>
+<h1>Noter Live</h1>
+<p>a web app to make live tweeting easier. by Kevin Marks. Currently vey ugly and semi-functional
+<form name="note" >
+  #<input name="hashtag" value="#indiewebcamp">
+  <br>
+  @<input name="speakertwitter" value="@kevinmarks">
+  <input name="speakername" value="Kevin Marks">
+  <input name="speakerurl" value="http://epeus.blogspot.com">
+  <br>
+  <input type="search" name="quote" placeholder="blah" oninput="noteit()" onchange="noteit()" 
+        onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
+  <input type="button" value="Note" onclick="postit()" >
+<br>
+<textarea id="composed"></textarea>
+<span id="charcount">0</span>
+
+<br><textarea id="archive"></textarea>
+<br><textarea id="blogpost"></textarea>
+</form>
+<div id="preview"> </div>
 </body>
 </html>
