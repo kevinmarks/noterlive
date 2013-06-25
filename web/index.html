@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head><title>Noter Live</title>
+<link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <script>
 function noteit() {
     document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
@@ -18,29 +21,90 @@ function postit() {
     
 }
 </script>
+
+<style type='text/css'>
+body {
+  padding-top: 100px;
+}
+
+.row {
+  padding-bottom: 15px;
+}
+</style>
+
 </head>
 <body>
-<h1>Noter Live</h1>
-<a href="/auth/twitter" >Login with Twitter</a>
-<p>a web app to make live tweeting easier. by Kevin Marks. Currently very ugly and semi-functional
-<form name="note" >
-  #<input name="hashtag" value="#indiewebcamp">
-  <br>
-  @<input name="speakertwitter" value="@kevinmarks">
-  <input name="speakername" value="Kevin Marks">
-  <input name="speakerurl" value="http://epeus.blogspot.com">
-  <br>
-  <input type="search" name="quote" placeholder="blah" oninput="noteit()" onchange="noteit()" 
-        onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
-  <input type="button" value="Note" onclick="postit()" >
-<br>
-<textarea id="composed"></textarea>
-<span id="charcount">0</span>
+<div class='container'>
+  <div class="navbar navbar-fixed-top">
+    <div class="container">
+      <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
+      <a class='btn btn-info pull-right' href="/auth/twitter" >Login with Twitter</a>
+    </div>
+  </div>
 
-<br><textarea id="archive"></textarea>
-<br><textarea id="blogpost"></textarea>
-</form>
-<div id="preview"> </div>
-<iframe id="tweet" src="/showuser" seamless></iframe>
+  <div class='well'>
+    <p>A web app to make live tweeting easier. by Kevin Marks. Currently very ugly and semi-functional
+  </div>
+
+  <form name="note" class='form-inline'>
+    <div class='row'>
+      <div class="col col-lg-12">
+        <div class='input-group '>
+          <span class="input-group-addon input">#</span>
+          <input type='text' name="hashtag" value="#indiewebcamp">            
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-4'>
+        <div class='input-group'>
+          <span class="input-group-addon input">@</span>
+          <input name="speakertwitter" value="@kevinmarks" type='text' />
+        </div>
+      </div>
+      <div class='col col-lg-4'>
+        <input name="speakername" value="Kevin Marks" type='text' />
+      </div>
+      <div class='col col-lg-4'>
+        <input type='text' name="speakerurl" value="http://epeus.blogspot.com">
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-12'>
+        <div class='input-group'>
+          <input type="search" name="quote" placeholder="blah" oninput="noteit()" onchange="noteit()" 
+              onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
+              <span class="input-group-btn">
+                <input type="button" class='btn btn-default' value="Note" onclick="postit()" >
+              </span>
+            </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-12'>
+        <textarea id="composed"></textarea>
+        <span class='label' id="charcount">0</span>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-12'>
+        <textarea id="archive"></textarea>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-12'>
+        <textarea id="archive"></textarea>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col col-lg-12'>
+        <textarea id="blogpost"></textarea>
+      </div>
+    </div>
+  </form>
+  <div id="preview"> </div>    
+  <iframe id="tweet" src="/showuser" seamless></iframe>
+</div>
+
 </body>
 </html>
