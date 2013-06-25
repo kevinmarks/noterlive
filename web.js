@@ -1,15 +1,18 @@
 var express = require('express');
-
+var consumerKey = "wJTjmQgifUcO809yfuNkNQ";
+var consumerSecret = "yRLHDKYaVCpCIRY7n1BajRCuwCJ0XRqg4eULf28uk";
 var OAuth = require('oauth').OAuth
   , oauth = new OAuth(
       "https://api.twitter.com/oauth/request_token",
       "https://api.twitter.com/oauth/access_token",
-      "wJTjmQgifUcO809yfuNkNQ",
-      "yRLHDKYaVCpCIRY7n1BajRCuwCJ0XRqg4eULf28uk",
+      consumerKey,
+      consumerSecret,
       "1.0",
       "http://www.noterlive.com/auth/twitter/callback",
       "HMAC-SHA1"
     );
+
+var twitter = require('twitter-api').createClient();
 
 var express = require("express");
 var app = express();
@@ -61,8 +64,18 @@ app.get('/auth/twitter/callback', function(req, res, next) {
           req.session.oauth.access_token = oauth_access_token;
           req.session.oauth.access_token_secret = oauth_access_token_secret;
           console.log(results, req.session.oauth);
-          res.send("Authentication Successful");
-          // res.redirect('/'); // You might actually want to redirect!
+          res.send("Authenticated ");
+          twitter.setAuth ( 
+                consumerKey,
+                consumerSecret, 
+                req.session.oauth.access_token,
+                req.session.oauth.access_token_secret 
+            );
+
+            twitter.get( 'account/verify_credentials', { skip_status: true }, function( user, error, status ){
+                console.log( user ? 'Authenticated as @'+user.screen_name : 'Not authenticated' );
+            } );
+          //res.redirect('/'); // You might actually want to redirect!
         }
       }
     );
