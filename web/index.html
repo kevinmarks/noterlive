@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><title>Noter Live</title>
+<meta charset="utf-8">
 <link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -66,7 +67,7 @@ function postit() {
     <div class='row'>
       <div class='col col-lg-12'>
         <div class='input-group'>
-          <input type="search" name="quote" placeholder="blah" oninput="noteit()" onchange="noteit()" 
+          <input type="search" name="quote" placeholder="type the speaker's brilliant quote here" oninput="noteit()" onchange="noteit()" 
               onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
               <span class="input-group-btn">
                 <input type="button" class='btn btn-default' value="Note" onclick="postit()" >
