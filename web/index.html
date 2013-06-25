@@ -23,9 +23,6 @@ function postit() {
 </script>
 
 <style type='text/css'>
-body {
-  padding-top: 100px;
-}
 
 .row {
   padding-bottom: 15px;
@@ -35,18 +32,13 @@ body {
 </head>
 <body>
 <div class='container'>
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar">
     <div class="container">
       <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
       <a class='btn btn-info pull-right' href="/auth/twitter" >Login with Twitter</a>
     </div>
   </div>
 
-  <div class='well'>
-    <p>A web app to make live tweeting easier. By Kevin Marks. 
-    Currently semi-functional, but less ugly thanks to Frédéric de Villamil.
-    <a href="https://github.com/kevinmarks/noterlive">Code here</a>.
-  </div>
 
   <form name="note" class='form-inline'>
     <div class='row'>
@@ -95,11 +87,6 @@ body {
     </div>
     <div class='row'>
       <div class='col col-lg-12'>
-        <textarea id="archive"></textarea>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-12'>
         <textarea id="blogpost"></textarea>
       </div>
     </div>
@@ -107,6 +94,11 @@ body {
   <div id="preview"> </div>    
   <iframe id="tweet" src="/showuser" seamless></iframe>
 </div>
+  <footer class='well'>
+    <p>A web app to make live note posting (aka live-tweeting, live-blogging) easier. By Kevin Marks. 
+    Currently semi-functional, but less ugly thanks to Frédéric de Villamil.
+    <a href="https://github.com/kevinmarks/noterlive">Code here</a>.
+  </footer>
 
 </body>
 </html>
