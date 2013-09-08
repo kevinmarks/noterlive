@@ -87,12 +87,12 @@ app.get('/auth/twitter/callback', function(req, res, next) {
 
 app.get('/sendtweet', function(req, res, next) {
     console.log("sendtweet: " + req.query.status);
-           twitter.setAuth ( 
-                consumerKey,
-                consumerSecret, 
-                req.session.oauth.access_token,
-                req.session.oauth.access_token_secret 
-            );
+   twitter.setAuth ( 
+        consumerKey,
+        consumerSecret, 
+        req.session.oauth.access_token,
+        req.session.oauth.access_token_secret 
+    );
    twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
                 console.log( tweet ? 'posted as @'+tweet.user.screen_name : 'Not authenticated' );               
                res.send(tweet ? "<a href='https://twitter.com/" +tweet.user.screen_name+"/status/"+
@@ -110,6 +110,12 @@ app.get('/showuser', function(req, res, next) {
 
 app.get('/lookupspeaker', function(req, res, next) {
         speaker = {'twitter':'@t', 'url':'http://tantek.com', 'name':'Tantek Çelik' };
+       twitter.setAuth ( 
+            consumerKey,
+            consumerSecret, 
+            req.session.oauth.access_token,
+            req.session.oauth.access_token_secret 
+        );
         twitter.get('users/show',{'screen_name':req.query.handle}, function (user, error, status ) {
             speaker.twitter = user.screen_name;
             speaker.name = user.name;
