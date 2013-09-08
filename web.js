@@ -117,7 +117,7 @@ app.get('/lookupspeaker', function(req, res, next) {
             req.session.oauth.access_token_secret 
         );
         twitter.get('users/show',{'screen_name':req.query.handle}, function (user, error, status ) {
-            speaker.twitter = user.screen_name;
+            speaker.twitter = '@' + user.screen_name;
             speaker.name = user.name;
             speaker.url = user.entities.url.urls[0].expanded_url;
             speaker.url = speaker.url ? speaker.url : 'https://twitter.com/' + speaker.twitter;
