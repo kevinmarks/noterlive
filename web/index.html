@@ -34,7 +34,7 @@ function foundspeaker() {
    if (req.readyState == 4) {
        // only if "OK"
        if (req.status == 200 || req.status == 304) {
-           document.getElementById('error').innerHTML=req.responseText;
+           //document.getElementById('error').innerHTML=req.responseText;
            speaker = JSON.parse(req.responseText);
            document.note.speakertwitter.value =speaker.twitter;
            document.note.speakerurl.value = speaker.url;
