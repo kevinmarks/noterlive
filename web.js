@@ -108,6 +108,19 @@ app.get('/showuser', function(req, res, next) {
     }
 });
 
+app.get('/lookupspeaker', function(req, res, next) {
+        speaker = {'twitter':'@t', 'url':'http://tantek.com', 'name':'Tantek Çelik' };
+        twitter.get('users/show',{'screen_name':req.query.handle}, function (user, error, status ) {
+            speaker.twitter = user.screen_name;
+            speaker.name = user.name;
+            speaker.url = user.entities.url.urls[0].expanded_url;
+            speaker.url = speaker.url ? speaker.url : 'https://twitter.com/' + speaker.twitter;
+            astxt = JSON.stringify(speaker);
+            res.send(astxt);
+        });
+});
+
+    
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
