@@ -14,15 +14,11 @@ var OAuth = require('oauth').OAuth
 
 var twitter = require('twitter-api').createClient();
 
-var express = require("express");
 var app = express();
 app.configure(function(){
     app.use(express.static(__dirname + '/web'));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
-
-    //app.use(express.session({secret:'refulgenceherringglueeffluent'}));
-
     app.use(express.cookieSession({secret:'refulgenceherringglueeffluent'}));
 });
 
@@ -91,7 +87,13 @@ app.get('/auth/twitter/callback', function(req, res, next) {
 
 app.get('/sendtweet', function(req, res, next) {
     console.log("sendtweet: " + req.query.status);
-    twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
+           twitter.setAuth ( 
+                consumerKey,
+                consumerSecret, 
+                req.session.oauth.access_token,
+                req.session.oauth.access_token_secret 
+            );
+   twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
                 console.log( tweet ? 'posted as @'+tweet.user.screen_name : 'Not authenticated' );               
                res.send(tweet ? "<a href='https://twitter.com/" +tweet.user.screen_name+"/status/"+
                     tweet.id_str+"'>"+tweet.text+"</a>":"<a href='/auth/twitter'>login first</a>");
