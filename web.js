@@ -119,7 +119,7 @@ app.get('/lookupspeaker', function(req, res, next) {
         twitter.get('users/show',{'screen_name':req.query.handle}, function (user, error, status ) {
             speaker.twitter = '@' + user.screen_name;
             speaker.name = user.name;
-            speaker.url = user.entities.url.urls[0].expanded_url;
+            speaker.url = user.entities.url ? user.entities.url.urls[0].expanded_url :"";
             speaker.url = speaker.url ? speaker.url : 'https://twitter.com/' + speaker.twitter;
             astxt = JSON.stringify(speaker);
             res.send(astxt);
