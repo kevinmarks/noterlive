@@ -1,105 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head><title>Noter Live</title>
-<meta charset="utf-8">
-<link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link href="bootstrap.css" media="all" rel="stylesheet" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
-function noteit() {
-    document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
-    document.getElementById("charcount").innerHTML = document.note.composed.value.length;
-}
-function getSpeakerHTML() {
-    return "<a href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
-}
-function postit() {
-    document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +getSpeakerHTML() + document.note.quote.value;
-    document.getElementById("preview").innerHTML = document.note.blogpost.value;
-    document.getElementById("tweet").src='/sendtweet?status='+escape(document.note.composed.value);
-    document.note.quote.value = "";
-    
-}
-</script>
+    <script>
+        function noteit() {
+            document.note.composed.value = document.note.hashtag.value + " " + document.note.speakertwitter.value + ": " + document.note.quote.value;
+            document.getElementById("charcount").innerHTML = document.note.composed.value.length;
+        }
+        function getSpeakerHTML() {
+            return "<a href='" + document.note.speakerurl.value + "'>" + document.note.speakername.value + '</a>: ';
+        }
+        function postit() {
+            document.note.archive.value = document.note.archive.value + "\n" + document.note.composed.value;
+            document.note.blogpost.value = document.note.blogpost.value + "\n<p>" + getSpeakerHTML() + document.note.quote.value;
+            document.getElementById("preview").innerHTML = document.note.blogpost.value;
+            document.getElementById("tweet").src = '/sendtweet?status=' + escape(document.note.composed.value);
+            document.note.quote.value = "";
 
-<style type='text/css'>
+        }
 
-.row {
-  padding-bottom: 15px;
-}
-</style>
+        function changespeakerinfo() {
+            handle = document.note.speakerhandle.value;
+            req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                foundspeaker();
+            };
+            req.open("GET", '/lookupspeaker?handle=' + handle, true);
+            req.send(null);
+            document.note.speakertwitter.value = '@' + handle;
+        }
+        function foundspeaker() {
+            // only if req is "loaded"
+            if (req.readyState == 4) {
+                // only if "OK"
+                if (req.status == 200 || req.status == 304) {
+                    //document.getElementById('error').innerHTML=req.responseText;
+                    speaker = JSON.parse(req.responseText);
+                    // document.note.speakertwitter.value = speaker.twitter;
+                    document.note.speakerurl.value = speaker.url;
+                    document.note.speakername.value = speaker.name;
+                } else {
+                    document.getElementById('error').innerHTML = "ahah error:\n" +
+                            req.statusText;
+                }
+            }
+        }
+    </script>
+
+    <style type='text/css'>
+
+        .row {
+            padding-bottom: 15px;
+        }
+    </style>
 
 </head>
 <body>
 <div class='container'>
-  <div class="navbar">
-    <div class="container">
-      <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
-      <a class='btn btn-info pull-right' href="/auth/twitter" >Login with Twitter</a>
+    <div class="navbar">
+        <div class="container">
+            <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
+            <a class='btn btn-info pull-right' href="/auth/twitter">Login with Twitter</a>
+        </div>
     </div>
-  </div>
 
 
-  <form name="note" class='form-inline'>
-    <div class='row'>
-      <div class="col col-lg-12">
-        <div class='input-group '>
-          <span class="input-group-addon input">#</span>
-          <input type='text' name="hashtag" value="#indiewebcamp">            
-        </div>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-4'>
-        <div class='input-group'>
-          <span class="input-group-addon input">@</span>
-          <input name="speakertwitter" value="@kevinmarks" type='text' />
-        </div>
-      </div>
-      <div class='col col-lg-4'>
-        <input name="speakername" value="Kevin Marks" type='text' />
-      </div>
-      <div class='col col-lg-4'>
-        <input type='text' name="speakerurl" value="http://epeus.blogspot.com">
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-12'>
-        <div class='input-group'>
-          <input type="search" name="quote" placeholder="type the speaker's brilliant quote here" oninput="noteit()" onchange="noteit()" 
-              onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
-              <span class="input-group-btn">
-                <input type="button" class='btn btn-default' value="Note" onclick="postit()" >
-              </span>
+    <form name="note" class='form-inline'>
+        <div class='row'>
+            <div class="col col-lg-12">
+                <div class='input-group '>
+                    <span class="input-group-addon input">#</span>
+                    <input type='text' name="hashtag" value="#indiewebcamp">
+                </div>
             </div>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-12'>
-        <textarea id="composed"></textarea>
-        <span class='label' id="charcount">0</span>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-12'>
-        <textarea id="archive"></textarea>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col col-lg-12'>
-        <textarea id="blogpost"></textarea>
-      </div>
-    </div>
-  </form>
-  <div id="preview"> </div>    
-  <iframe id="tweet" src="/showuser" seamless></iframe>
+        </div>
+        <input name="speakerhandle" value="waxpancake" type="text">
+        <input type="button" class="btn" value="Change Speaker" onclick="changespeakerinfo()">
+
+        <div class='row'>
+            <div class='col col-lg-4'>
+                <div class='input-group'>
+                    <span class="input-group-addon input">@</span>
+                    <input name="speakertwitter" value="@kevinmarks" type='text'/>
+                </div>
+            </div>
+            <div class='col col-lg-4'>
+                <input name="speakername" value="Kevin Marks" type='text'/>
+            </div>
+            <div class='col col-lg-4'>
+                <input type='text' name="speakerurl" value="http://epeus.blogspot.com">
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col col-lg-12'>
+                <div class='input-group'>
+                    <input type="search" name="quote" placeholder="type the speaker's brilliant quote here"
+                           oninput="noteit()" onchange="noteit()"
+                           onkeydown="if (event.keyCode == 13) { postit(); return false; }">
+              <span class="input-group-btn">
+                <input type="button" class='btn btn-default' value="Note" onclick="postit()">
+              </span>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col col-lg-12'>
+                <textarea id="composed"></textarea>
+                <span class='label' id="charcount">0</span>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col col-lg-12'>
+                <textarea id="archive"></textarea>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col col-lg-12'>
+                <textarea id="blogpost"></textarea>
+            </div>
+        </div>
+    </form>
+    <div id="preview"></div>
+    <iframe id="tweet" src="/showuser" seamless></iframe>
 </div>
-  <footer class='well'>
-    <p>A web app to make live note posting (aka live-tweeting, live-blogging) easier. By Kevin Marks. 
-    Currently semi-functional, but less ugly thanks to Frédéric de Villamil.
-    <a href="https://github.com/kevinmarks/noterlive">Code here</a>.
-  </footer>
+
+
+<footer class='well'>
+    <p>A web app to make live note posting (aka live-tweeting, live-blogging) easier. By Kevin Marks.
+        Currently semi-functional, but less ugly thanks to Frédéric de Villamil.
+        <a href="https://github.com/kevinmarks/noterlive">Code here</a>.
+</footer>
 
 </body>
 </html>
