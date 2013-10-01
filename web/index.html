@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script>
+var lastSpeakerHTML = "";
 function noteit() {
     document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
     document.getElementById("charcount").innerHTML = document.note.composed.value.length;
@@ -15,7 +16,15 @@ function getSpeakerHTML() {
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +getSpeakerHTML() + document.note.quote.value;
+    speakerHTML = getSpeakerHTML();
+    if (speakerHTML == lastSpeakerHTML) {
+        speakerHTML = ""; // don't repeat for each line
+    } else {
+        if (lastSpeakerHTML != "") { speakerHTML = "</blockquote>\n" + speakerHTML; }
+        speakerHTML = speakerHTML + " <blockquote><p>";
+        lastSpeakerHTML = getSpeakerHTML();
+    }            
+    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + document.note.quote.value;
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
     document.getElementById("tweet").src='/sendtweet?status='+escape(document.note.composed.value);
     document.note.quote.value = "";
@@ -36,14 +45,17 @@ function foundspeaker() {
        if (req.status == 200 || req.status == 304) {
            //document.getElementById('error').innerHTML=req.responseText;
            speaker = JSON.parse(req.responseText);
-           document.note.speakertwitter.value =speaker.twitter;
-           document.note.speakerurl.value = speaker.url;
-           document.note.speakername.value = speaker.name;
-       } else {
+           setspeaker(speaker);
+        } else {
            document.getElementById('error').innerHTML="ahah error:\n" +
                req.statusText;
        }
    }
+}
+function setspeaker(speaker) {
+    document.note.speakertwitter.value = speaker.twitter;
+    document.note.speakerurl.value = speaker.url ? speaker.url : "https://twitter.com/"+ speaker.twitter;
+    document.note.speakername.value = speaker.name ? speaker.name : speaker.twitter ;
 }
 </script>
 
