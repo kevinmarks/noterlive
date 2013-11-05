@@ -46,6 +46,14 @@ function foundspeaker() {
            //document.getElementById('error').innerHTML=req.responseText;
            speaker = JSON.parse(req.responseText);
            setspeaker(speaker);
+           if (!document.getElementById(speaker.twitter)) {
+				var button = document.createElement("input");
+				button.type = "button";
+				button.value = speaker.twitter;
+				button.id = speaker.twitter;
+				button.setAttribute('onclick', 'setspeaker(' + speaker +');');
+              	document.getElementById('speakerlist').appendChild(button);
+           }
         } else {
            document.getElementById('error').innerHTML="ahah error:\n" +
                req.statusText;
@@ -88,6 +96,7 @@ function setspeaker(speaker) {
       </div>
     </div>
     <input name="speakerhandle" value="waxpancake" type='text' /><input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
+    <ul id="speakerlist"></ul>
     <div class='row'>
       <div class='col col-lg-4'>
         <div class='input-group'>
