@@ -51,7 +51,7 @@ function foundspeaker() {
 				button.type = "button";
 				button.value = speaker.twitter;
 				button.id = speaker.twitter;
-				button.setAttribute('onclick', 'setspeaker(' + speaker +');');
+				button.setAttribute('onclick', 'setspeaker(' + JSON.stringify(speaker) +');');
               	document.getElementById('speakerlist').appendChild(button);
            }
         } else {
