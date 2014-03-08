@@ -9,7 +9,11 @@
 var lastSpeakerHTML = "";
 function noteit() {
     document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
-    document.getElementById("charcount").innerHTML = strlen(tw_text_proxy(document.note.composed.value));
+    var rawcount = strlen(document.note.composed.value);
+    var munged = tw_text_proxy(document.note.composed.value);
+    var mungleft = 140-strlen(munged);
+    
+    document.getElementById("charcount").innerHTML = "raw: " + rawcount + " left:"+ mungleft;
 }
 function getSpeakerHTML() {
     return "<a class='h-card' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
@@ -26,7 +30,7 @@ function postit() {
     }            
     document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + document.note.quote.value;
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
-    document.getElementById("tweet").src='/sendtweet?status='+escape(document.note.composed.value);
+    document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
     
 }
