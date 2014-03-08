@@ -94,9 +94,9 @@ app.get('/sendtweet', function(req, res, next) {
         req.session.oauth.access_token_secret 
     );
    twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
-                console.log( tweet ? 'posted as @'+tweet.user.screen_name : 'Not authenticated' );               
+                console.log( tweet ? 'posted as @'+tweet.user.screen_name : error );               
                res.send(tweet ? "<a href='https://twitter.com/" +tweet.user.screen_name+"/status/"+
-                    tweet.id_str+"'>"+tweet.text+"</a>":"<a href='/auth/twitter'>login first</a>");
+                    tweet.id_str+"'>"+tweet.text+"</a>":error + "<a href='/auth/twitter'>login first? </a>");
             } );
 });
 
