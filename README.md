@@ -7,8 +7,6 @@ To try it go to http://www.noterlive.com
 
 TO DO
 =====
-better twitter length estimation (via Tantek's Falcon)
-
 add a logout button for twitter
 
 add title and header/footer composition for full posts
@@ -19,4 +17,9 @@ persist to localStorage to survive accidental refresh
 
 add micropub support for noting elsewhere
 
-add micropub/atompub/metaweblog for posting sumamries elsewhere
+add micropub/atompub/metaweblog for posting articles elsewhere
+
+DONE
+====
+better twitter length estimation (via Tantek's cassis.js)
+autolink in the html version (via Tantek's cassis.js)

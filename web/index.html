@@ -28,7 +28,7 @@ function postit() {
         speakerHTML = speakerHTML + " <blockquote><p>";
         lastSpeakerHTML = getSpeakerHTML();
     }            
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + document.note.quote.value;
+    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + auto_link(document.note.quote.value, true);
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
