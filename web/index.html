@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<script src="cassis.js"></script>
 <script>
 var lastSpeakerHTML = "";
 function noteit() {
     document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
-    document.getElementById("charcount").innerHTML = document.note.composed.value.length;
+    document.getElementById("charcount").innerHTML = strlen(tw_text_proxy(document.note.composed.value));
 }
 function getSpeakerHTML() {
     return "<a class='h-card' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
