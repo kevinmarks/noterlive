@@ -1,8 +1,8 @@
 {
   "name": "noterlive",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
-    "express": "3.0.5",
+    "express": "3.x",
     "twitter-api":"1.x",
     "oauth": "0.9.x",
     "request": "2.x"
