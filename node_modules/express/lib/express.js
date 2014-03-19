@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 
+var merge = require('merge-descriptors');
 var connect = require('connect')
   , proto = require('./application')
   , Route = require('./router/route')
@@ -15,12 +16,6 @@ var connect = require('connect')
  */
 
 exports = module.exports = createApplication;
-
-/**
- * Framework version.
- */
-
-exports.version = '3.0.5';
 
 /**
  * Expose mime.
@@ -38,8 +33,8 @@ exports.mime = connect.mime;
 function createApplication() {
   var app = connect();
   utils.merge(app, proto);
-  app.request = { __proto__: req };
-  app.response = { __proto__: res };
+  app.request = { __proto__: req, app: app };
+  app.response = { __proto__: res, app: app };
   app.init();
   return app;
 }
@@ -49,12 +44,7 @@ function createApplication() {
  * for example `express.logger` etc.
  */
 
-for (var key in connect.middleware) {
-  Object.defineProperty(
-      exports
-    , key
-    , Object.getOwnPropertyDescriptor(connect.middleware, key));
-}
+merge(exports, connect.middleware);
 
 /**
  * Error on createServer().

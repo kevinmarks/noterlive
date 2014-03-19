@@ -2,11 +2,11 @@
   "name": "noterlive",
   "version": "0.0.2",
   "dependencies": {
-    "express": "3.x",
-    "twitter-api":"1.x",
+    "express": "~3.4.8",
+    "twitter-api": "1.x",
     "oauth": "0.9.x",
-    "request": "2.x"
-
+    "request": "2.x",
+    "logfmt": "~1.0.0-pre3"
   },
   "engines": {
     "node": "0.10.x",
