@@ -85,6 +85,10 @@ app.get('/auth/twitter/callback', function(req, res, next) {
  
 });
 
+app.post('/auth/indie', function(req, res, next) {
+	console.log("indieauth: "+ req.body.yoururl);
+});
+
 app.get('/sendtweet', function(req, res, next) {
     console.log("sendtweet: " + req.query.status + twitter.hasAuth);
 	twitter.setAuth ( 

@@ -4,7 +4,9 @@
   "dependencies": {
     "express": "3.0.5",
     "twitter-api":"1.x",
-    "oauth": "0.9.x"
+    "oauth": "0.9.x",
+    "request": "2.x"
+
   },
   "engines": {
     "node": "0.10.x",
