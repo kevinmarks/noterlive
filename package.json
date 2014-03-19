@@ -6,7 +6,9 @@
     "twitter-api": "1.x",
     "oauth": "0.9.x",
     "request": "2.x",
-    "logfmt": "~1.0.0-pre3"
+    "logfmt": "~1.0.0-pre3",
+    "merge-descriptors": "0.0.2",
+    "connect": "~2.14.3"
   },
   "engines": {
     "node": "0.10.x",
