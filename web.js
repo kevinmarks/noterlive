@@ -41,6 +41,13 @@ app.get('/auth/twitter', function(req, res) {
  
 });
 
+app.get('/auth/twitterlogout', function(req, res) {
+  // Only destroys the session, doesn't revoke the key.
+  // Twitter doesn't have an API for user-level revocation.
+  req.session = null;
+  res.redirect('/');
+});
+
 app.get('/auth/twitter/callback', function(req, res, next) {
  
   if (req.session.oauth) {
@@ -111,7 +118,8 @@ app.get('/sendtweet', function(req, res, next) {
 
 app.get('/showuser', function(req, res, next) {
     if (req.session.user) {
-        res.send("<img src='" +req.session.user.profile_image_url + "'> logged in as @"+req.session.user.screen_name);
+	var data = {"profileImage":req.session.user.profile_image_url, "screenName": req.session.user.screen_name};
+	res.send(data);
     } else {
          res.send("not logged in");
     }

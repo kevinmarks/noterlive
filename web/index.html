@@ -69,12 +69,38 @@ function setspeaker(speaker) {
     document.note.speakerurl.value = speaker.url ? speaker.url : "https://twitter.com/"+ speaker.twitter;
     document.note.speakername.value = speaker.name ? speaker.name : speaker.twitter ;
 }
+
+function loadprofiledata() {
+    if (this.readyState === 4) {
+        var data = JSON.parse(this.responseText);
+        console.log(data);
+        document.querySelector("#profileimage").src = data.profileImage;
+        document.querySelector("#profilename").innerText = '@' +data.screenName;
+        document.querySelector("#profile").classList.remove('hidden');
+        // Hide login button
+        document.querySelector("a[href='/auth/twitter']").classList.add('hidden');
+        document.querySelector("a[href='/auth/twitterlogout']").classList.remove('hidden');
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var req = new XMLHttpRequest();
+    req.open("GET", "/showuser", true);
+    req.onreadystatechange = loadprofiledata;
+    req.send();
+});
 </script>
 
 <style type='text/css'>
 
 .row {
   padding-bottom: 15px;
+}
+.hidden {
+  display: none;
+}
+#profile {
+  display: inline;
 }
 </style>
 
@@ -83,19 +109,24 @@ function setspeaker(speaker) {
 <div class='container'>
   <div class="navbar">
     <div class="container">
-      <h1><a class='navbar-brand' href="#">Noter Live</a></h1> 
-		<div class='row '>
+      <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
 		<form name="indieauth" method="post" action="/auth/indie" class="hidden">
 			  <div class="col col-lg-2"><span >your url:</span></div>
 			  <div class="col col-lg-4"><input type='url' name='yoururl' ></div>   
 			  <div class="col col-lg-2"><input type='submit' name='signin' value="Sign in"></div>       
 		</form>
-      <a class='btn btn-info pull-right col col-lg-2' href="/auth/twitter" >Login with Twitter</a>
-		</div>
-    </div>
+      <div class='pull-right'>
+	 <a class='btn btn-info pull-right' href="/auth/twitter" >Login with Twitter</a>
+	 <div id='profile' class='hidden'>
+	   <img id="profileimage" src="">
+	   Logged in as <span id="profilename"></span>
+	 </div>
+	 <a class='btn btn-info hidden' href="/auth/twitterlogout">Logout</a>
+      </div>
+     
     </div>
   </div>
- <iframe id="tweet" width=80% height=70px src="/showuser" seamless></iframe>
+ <iframe id="tweet" class='hidden' src=""></iframe>
   <div id="error"> </div>    
 
   <form name="note" class='form-inline'>
