@@ -2,7 +2,7 @@
   "name": "noterlive",
   "version": "0.0.2",
   "dependencies": {
-    "express": "3.0.5",
+    "express": "3.17.4",
     "twitter-api": "1.x",
     "oauth": "0.9.x"
   },
