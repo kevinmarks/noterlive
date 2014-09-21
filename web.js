@@ -1,6 +1,6 @@
 var express = require('express');
-var consumerKey = "wJTjmQgifUcO809yfuNkNQ";
-var consumerSecret = "yRLHDKYaVCpCIRY7n1BajRCuwCJ0XRqg4eULf28uk";
+var consumerKey = process.env.TWITTER_CONSUMER_KEY;
+var consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
 var OAuth = require('oauth').OAuth
   , oauth = new OAuth(
       "https://api.twitter.com/oauth/request_token",
