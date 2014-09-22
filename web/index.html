@@ -3,6 +3,9 @@
 <head><title>Noter Live</title>
 <meta charset="utf-8">
 <link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="shortcut icon" href="noterlive.png" />
+<link rel="apple-touch-icon" href="noterlive.png" />
+<meta name="mobile-web-app-capable" content="yes" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="cassis.js"></script>
 <script>
@@ -117,7 +120,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class='container'>
   <div class="navbar">
     <div class="container">
-      <h1><a class='navbar-brand' href="#">Noter Live</a></h1>
+      <h1><img id="logo" src="noterlive.svg" width="48px" style="float:left;" >
+<a class='navbar-brand' href="#">Noter Live</a></h1>
 		<form name="indieauth" method="post" action="/auth/indie" class="hidden">
 			  <div class="col col-lg-2"><span >your url:</span></div>
 			  <div class="col col-lg-4"><input type='url' name='yoururl' ></div>   
