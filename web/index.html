@@ -12,8 +12,16 @@ function noteit() {
     var rawcount = strlen(document.note.composed.value);
     var munged = tw_text_proxy(document.note.composed.value);
     var mungleft = 140-strlen(munged);
+    var countElement= document.getElementById("charcount");
+    var countColour = "black";
     
-    document.getElementById("charcount").innerHTML = "raw: " + rawcount + " left:"+ mungleft;
+    countElement.innerHTML = mungleft;
+    
+    if (mungleft<15) { countColour = "maroon";} 
+    if (mungleft<5) { countColour = "darkorange";} 
+    if (mungleft<0) { countColour = "red";} 
+    countElement.style.backgroundColor = countColour;
+    document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
     return "<a class='h-card' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
@@ -160,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <input type="search" name="quote" placeholder="type the speaker's brilliant quote here" oninput="noteit()" onchange="noteit()" 
               onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
               <span class="input-group-btn">
-                <input type="button" class='btn btn-default' value="Note" onclick="postit()" >
+                <input id="notebutton" type="button" class='btn btn-default' value="Note" onclick="postit()" >
               </span>
             </div>
       </div>
