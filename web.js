@@ -1,6 +1,7 @@
 var express = require('express');
 var consumerKey = process.env.TWITTER_CONSUMER_KEY;
 var consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
+var appRoot = process.env.APP_ROOT || "localhost:5000";
 var OAuth = require('oauth').OAuth
   , oauth = new OAuth(
       "https://api.twitter.com/oauth/request_token",
@@ -8,7 +9,7 @@ var OAuth = require('oauth').OAuth
       consumerKey,
       consumerSecret,
       "1.0",
-      "http://www.noterlive.com/auth/twitter/callback",
+      appRoot + "/auth/twitter/callback",
       "HMAC-SHA1"
     );
 
