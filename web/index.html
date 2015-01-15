@@ -43,6 +43,7 @@ function postit() {
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
+    noteit(); //fix counter and button colour
     
 }
 function changespeakerinfo() {
