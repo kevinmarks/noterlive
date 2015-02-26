@@ -11,7 +11,8 @@
 <script>
 var lastSpeakerHTML = "";
 function noteit() {
-    document.note.composed.value = document.note.hashtag.value +" "+document.note.speakertwitter.value +": " + document.note.quote.value;
+    var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +": " :" ";
+    document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
     var rawcount = strlen(document.note.composed.value);
     var munged = tw_text_proxy(document.note.composed.value);
     var mungleft = 140-strlen(munged);
