@@ -10,6 +10,93 @@
 <script src="cassis.js"></script>
 <script>
 var lastSpeakerHTML = "";
+var localstoragemustard = supports_html5_storage();
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+
+
+function storeLocal () {
+	if ( false == localstoragemustard ) {
+		return;
+	}
+	
+	var forStorage = {
+		screenname: document.querySelector("#profilename").innerText,
+		lastSpeakerHTML: lastSpeakerHTML,
+		blogpost: document.note.blogpost.value,
+		archive: document.note.archive.value,
+		hashtag: document.note.hashtag.value,
+		speakerhandle: document.note.speakerhandle.value,
+		speakertwitter: document.note.speakertwitter.value,
+		speakername: document.note.speakername.value,
+		speakerurl: document.note.speakerurl.value,
+		speakerlink: document.getElementById( 'speakerlist' ).innerHTML
+	}
+	
+	var forStorageString = JSON.stringify( forStorage );
+	
+	localStorage.setItem( 'noterliver', forStorageString );
+}
+
+function recoverLocal( screenname ) {
+	if ( false == localstoragemustard ) {
+		return;
+	}
+	
+	var forStorageString = localStorage.getItem( 'noterliver' );
+
+	if ( null == forStorageString ) {
+		// got nothin' for you
+		return;
+	}
+	
+	var forStorage = JSON.parse( forStorageString );
+
+	if ( screenname != forStorage.screenname ) {
+		// no longer correct
+		clearLocal();
+		// head back to camp
+		return;
+	}
+	
+		
+	var fields = ['blogpost','archive','hashtag','funk','speakerhandle','speakertwitter','speakername','speakerurl'];
+	
+	for ( var i=0,l=fields.length; i<l; i++ ) {
+		console.log( 'fields', fields[i] );
+		
+		if ( typeof forStorage[fields[i]] == 'undefined' ) {
+			continue;
+		}
+		
+		if ( typeof document.note[fields[i]] == 'undefined' ) {
+			continue;
+		}
+		
+		
+		document.note[fields[i]].value = forStorage[fields[i]];
+	}
+	
+	document.getElementById( 'speakerlist' ).innerHTML = forStorage.speakerlink;
+	lastSpeakerHTML = forStorage.lastSpeakerHTML;
+}
+
+function clearLocal() {
+	if ( false == localstoragemustard ) {
+		return;
+	}
+	
+	localStorage.removeItem( 'noterliver' );
+}
+
+
+
 function noteit() {
     var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +": " :" ";
     document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
@@ -45,7 +132,7 @@ function postit() {
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
     noteit(); //fix counter and button colour
-    
+    storeLocal();
 }
 function changespeakerinfo() {
     handle=document.note.speakerhandle.value;
@@ -93,6 +180,7 @@ function loadprofiledata() {
         // Hide login button
         document.querySelector("a[href='/auth/twitter']").classList.add('hidden');
         document.querySelector("a[href='/auth/twitterlogout']").classList.remove('hidden');
+		recoverLocal( '@' + data.screenName );
     }
 }
 
@@ -152,7 +240,8 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
       </div>
     </div>
-    <input name="speakerhandle" value="waxpancake" type='text' /><input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
+    <input name="speakerhandle" value="waxpancake" type='text' />
+	<input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
     <ul id="speakerlist"></ul>
     <div class='row'>
       <div class='col col-lg-4'>
@@ -195,8 +284,21 @@ document.addEventListener("DOMContentLoaded", function() {
         <textarea id="blogpost"></textarea>
       </div>
     </div>
+	<div class="row">
+		<div class="col col-lg-12">
+			<input type="button" class='btn' value="Clear speakers and logs" onclick="clearLocal(); location.reload(); return false;" > 
+		</div>
+	</div>
   </form>
+	<div class="row">
+		<div class="col col-lg-12">
   <div id="preview"> </div>    
+		</div>
+	</div>
+
+
+
+
 </div>
   <footer class='well'>
     <p>A web app to make live note posting (aka live-tweeting, live-blogging) easier. By <a href="http://kevinmarks.com">Kevin Marks</a>. 
