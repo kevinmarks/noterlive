@@ -119,7 +119,7 @@ app.get('/sendtweet', function(req, res, next) {
 
 app.get('/showuser', function(req, res, next) {
     if (req.session.user) {
-	var data = {"profileImage":req.session.user.profile_image_url, "screenName": req.session.user.screen_name};
+	var data = {"profileImage":req.session.user.profile_image_url, "screenName": req.session.user.screen_name, "fullName": req.session.user.name };
 	res.send(data);
     } else {
          res.send("not logged in");

@@ -177,6 +177,9 @@ function loadprofiledata() {
         console.log(data);
         document.querySelector("#profileimage").src = data.profileImage;
         document.querySelector("#profilename").innerText = '@' +data.screenName;
+        document.querySelector("#profileimage2").src = data.profileImage;
+        document.querySelector("#profilename2").innerText = '@' +data.screenName;
+        document.querySelector("#profilefullname").innerText = data.fullName;
         document.querySelector("#profile").classList.remove('hidden');
         // Hide login button
         document.querySelector("a[href='/auth/twitter']").classList.add('hidden');
@@ -288,18 +291,18 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="Tweet-author u-textTruncate h-card p-author" >
   <a class="Tweet-authorLink Identity u-linkBlend"  href="https://twitter.com/kevinmarks">
     <span class="Tweet-authorAvatar Identity-avatar">
-      <img class="Avatar u-photo"  src="https://pbs.twimg.com/profile_images/553009683087114240/tU5HkXEI_normal.jpeg">
+      <img  id="profileimage2" class="Avatar u-photo"  src="">
     </span>
-    <span class="Tweet-authorName Identity-name p-name customisable-highlight" >Kevin Marks</span>
+    <span id="profilefullname" class="Tweet-authorName Identity-name p-name customisable-highlight"> </span>
     
-    <span class="Tweet-authorScreenName Identity-screenName p-nickname" >@kevinmarks</span>
+    <span id="profilename2" class="Tweet-authorScreenName Identity-screenName p-nickname" ></span>
   </a>
 </div>
 
   </div>
 
   <div class="Tweet-body e-entry-content" >
-    <p id="tweetpre" class="Tweet-text e-entry-title" lang="" dir="">How about: What obscure thing could you start documenting so anyone else in the world can help document it better?  </p>
+    <p id="tweetpre" class="Tweet-text e-entry-title" lang="" dir=""></p>
 
 
     <div class="Tweet-metadata dateline">
