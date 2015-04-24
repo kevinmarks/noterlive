@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="noterlive.png" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link type="text/css" rel="stylesheet" href="tweetembed.css">
 <script src="cassis.js"></script>
 <script>
 var lastSpeakerHTML = "";
@@ -107,7 +108,7 @@ function noteit() {
     var countColour = "black";
     
     countElement.innerHTML = mungleft;
-    
+    document.getElementById("tweetpre").innerHTML = munged
     if (mungleft<15) { countColour = "maroon";} 
     if (mungleft<5) { countColour = "darkorange";} 
     if (mungleft<0) { countColour = "red";} 
@@ -274,6 +275,45 @@ document.addEventListener("DOMContentLoaded", function() {
         <span class='label' id="charcount">0</span>
       </div>
     </div>
+<div id="fakeiframe" style="font-family: 'Helvetica Neue', Helvetica, sans-serif; font-size:14; border: none; max-width: 100%; min-width: 220px; margin: 10px 0px; padding: 0px; display: block; position: static; visibility: visible; width: 500px;">
+
+<div class="EmbeddedTweet decider-tapOpensPermalink  twitter-tweet not-touch" >
+
+    <div class="EmbeddedTweet-tweet">
+<blockquote class="Tweet h-entry tweet subject expanded" >
+  <div class="Tweet-header u-cf">
+    <div class="Tweet-followButton u-floatRight">
+</div>
+    
+<div class="Tweet-author u-textTruncate h-card p-author" >
+  <a class="Tweet-authorLink Identity u-linkBlend"  href="https://twitter.com/kevinmarks">
+    <span class="Tweet-authorAvatar Identity-avatar">
+      <img class="Avatar u-photo"  src="https://pbs.twimg.com/profile_images/553009683087114240/tU5HkXEI_normal.jpeg">
+    </span>
+    <span class="Tweet-authorName Identity-name p-name customisable-highlight" >Kevin Marks</span>
+    
+    <span class="Tweet-authorScreenName Identity-screenName p-nickname" >@kevinmarks</span>
+  </a>
+</div>
+
+  </div>
+
+  <div class="Tweet-body e-entry-content" >
+    <p id="tweetpre" class="Tweet-text e-entry-title" lang="" dir="">How about: What obscure thing could you start documenting so anyone else in the world can help document it better?  </p>
+
+
+    <div class="Tweet-metadata dateline">
+      
+
+<a class="u-linkBlend u-url customisable-highlight long-permalink"  href="https://twitter.com/kevinmarks/status/591427174579642368">
+<time class="dt-updated" datetime="2015-04-24T02:23:21+0000" pubdate="" title="Time posted: 24 Apr 2015, 02:23:21 (UTC)">7:23 PM - 23 Apr 2015</time></a>
+    </div>
+  </div>
+</blockquote>
+</div>
+  </div>
+  
+  </div>
     <div class='row'>
       <div class='col col-lg-12'>
         <textarea id="archive"></textarea>
