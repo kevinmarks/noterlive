@@ -108,7 +108,7 @@ function noteit() {
     var countColour = "black";
     
     countElement.innerHTML = mungleft;
-    document.getElementById("tweetpre").innerHTML = munged
+    document.getElementById("tweetpre").innerHTML = munged.slice(0,140)
     if (mungleft<15) { countColour = "maroon";} 
     if (mungleft<5) { countColour = "darkorange";} 
     if (mungleft<0) { countColour = "red";} 
