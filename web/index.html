@@ -116,7 +116,7 @@ function noteit() {
     document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
-    return "<a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
+    return "<div class='h-cite'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'><iframe class='u-hovercard' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'>" + document.note.speakername.value + '</iframe></a>: ';
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
@@ -124,8 +124,8 @@ function postit() {
     if (speakerHTML == lastSpeakerHTML) {
         speakerHTML = ""; // don't repeat for each line
     } else {
-        if (lastSpeakerHTML != "") { speakerHTML = "</blockquote>\n" + speakerHTML; }
-        speakerHTML = speakerHTML + " <blockquote><p>";
+        if (lastSpeakerHTML != "") { speakerHTML = "</blockquote></div>\n" + speakerHTML; }
+        speakerHTML = speakerHTML + " <blockquote class='e-content'><p>";
         lastSpeakerHTML = getSpeakerHTML();
     }            
     document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + auto_link(document.note.quote.value, true);
@@ -207,6 +207,8 @@ document.addEventListener("DOMContentLoaded", function() {
 #profile {
   display: inline;
 }
+.h-cite {display:webkit-flex; display:flex;}
+
 </style>
 
 </head>
