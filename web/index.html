@@ -117,7 +117,7 @@ function noteit() {
     document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
-    return "<div class='h-cite'><span class='hovercard'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a><iframe class='u-hovercard' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>: ";
+    return "<div class='h-cite'><span class='hovercard'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a><iframe class='u-hovercard hidden-info' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>: ";
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
