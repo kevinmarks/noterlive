@@ -8,6 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link type="text/css" rel="stylesheet" href="tweetembed.css">
+<link type="text/css" rel="stylesheet" href="hovercard.css">
 <script src="cassis.js"></script>
 <script>
 var lastSpeakerHTML = "";
@@ -116,7 +117,7 @@ function noteit() {
     document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
-    return "<div class='h-cite'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'><iframe class='u-hovercard' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'>" + document.note.speakername.value + '</iframe></a>: ';
+    return "<div class='h-cite'><span class='hovercard'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a><iframe class='u-hovercard' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>: ";
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
