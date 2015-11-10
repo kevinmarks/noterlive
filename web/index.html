@@ -117,7 +117,17 @@ function noteit() {
     document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
-    return "<div class='h-cite'><span class='hovercard'><a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a><iframe class='u-hovercard hidden-info' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>: ";
+    addHovercard = document.getElementById("hovercards").checked
+    html = "<div class='h-cite'>";
+    if (addHovercard) {
+        html = html+"<span class='hovercard'>";
+    }
+    html = html +"<a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a>";
+     if (addHovercard) {
+    html = html+"<iframe class='u-hovercard hidden-info' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>";
+    }
+    html = html+": ";
+    return html
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
@@ -237,8 +247,10 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
  <iframe id="tweet" class='hidden' src=""></iframe>
   <div id="error"> </div>    
-
-  <form name="note" class='form-inline'>
+    <div class='row'>
+<input type="checkbox" id="hovercards" name="hovercards"><label>add hovercards to html</label></input>
+</div>  
+<form name="note" class='form-inline'>
     <div class='row'>
       <div class="col col-lg-12">
         <div class='input-group '>
