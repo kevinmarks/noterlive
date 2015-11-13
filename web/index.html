@@ -154,6 +154,17 @@ function changespeakerinfo() {
         req.send(null);
     document.note.speakertwitter.value = '@' + handle;
 }
+function makespeakerbutton(speaker) {
+    id = speaker.twitter.replace(' ','_')
+    if (!document.getElementById(id)) {
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = speaker.twitter;
+        button.id = id;
+        button.setAttribute('onclick', 'setspeaker(' + JSON.stringify(speaker) +');');
+        document.getElementById('speakerlist').appendChild(button);
+    }
+}
 function foundspeaker() {
    // only if req is "loaded"
    if (req.readyState == 4) {
@@ -162,14 +173,7 @@ function foundspeaker() {
            //document.getElementById('error').innerHTML=req.responseText;
            speaker = JSON.parse(req.responseText);
            setspeaker(speaker);
-           if (!document.getElementById(speaker.twitter)) {
-				var button = document.createElement("input");
-				button.type = "button";
-				button.value = speaker.twitter;
-				button.id = speaker.twitter;
-				button.setAttribute('onclick', 'setspeaker(' + JSON.stringify(speaker) +');');
-              	document.getElementById('speakerlist').appendChild(button);
-           }
+           makespeakerbutton(speaker)
         } else {
            document.getElementById('error').innerHTML="ahah error:\n" +
                req.statusText;
@@ -181,7 +185,14 @@ function setspeaker(speaker) {
     document.note.speakerurl.value = speaker.url ? speaker.url : "https://twitter.com/"+ speaker.twitter;
     document.note.speakername.value = speaker.name ? speaker.name : speaker.twitter ;
 }
-
+function savespeaker() {
+    speaker= {};
+    speaker.twitter = document.note.speakertwitter.value;
+    speaker.url = document.note.speakerurl.value;
+    speaker.name = document.note.speakername.value;
+    makespeakerbutton(speaker)
+    
+}
 function loadprofiledata() {
     if (this.readyState === 4) {
         var data = JSON.parse(this.responseText);
@@ -263,17 +274,20 @@ document.addEventListener("DOMContentLoaded", function() {
 	<input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
     <ul id="speakerlist"></ul>
     <div class='row'>
-      <div class='col col-lg-4'>
+      <div class='col col-lg-3'>
         <div class='input-group'>
           <span class="input-group-addon input">@</span>
           <input name="speakertwitter" value="@kevinmarks" type='text' />
         </div>
       </div>
-      <div class='col col-lg-4'>
+      <div class='col col-lg-3'>
         <input name="speakername" value="Kevin Marks" type='text' />
       </div>
       <div class='col col-lg-4'>
         <input type='text' name="speakerurl" value="http://epeus.blogspot.com">
+      </div>
+      <div class='col col-lg-2'>
+        <input type="button" class='btn' value="Save Speaker" onclick="savespeaker()" > 
       </div>
     </div>
      <div class='row'>
