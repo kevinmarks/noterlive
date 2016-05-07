@@ -1,6 +1,6 @@
 {
   "name": "noterlive",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "express": "3.17.4",
     "twitter-api": "https://github.com/kevinmarks/node-twitter-api/tarball/master",
