@@ -69,6 +69,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
           req.session.oauth.access_token_secret = oauth_access_token_secret;
           console.log(results, req.session.oauth);
           //res.send("Authenticated <a href='/showuser'>as</a>");
+          console.log(consumerKey, consumerSecret);
           twitter.setAuth ( 
                 consumerKey,
                 consumerSecret, 
@@ -76,7 +77,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
                 req.session.oauth.access_token_secret 
             );
 
-            twitter.get( 'account/verify_credentials', { skip_status: true }, function( user, error, status ){
+            twitter.get( 'account/verify_credentials', { skip_status: false }, function( user, error, status ){
                 console.log( user ? 'Authenticated as @'+user.screen_name : 'Not authenticated' );
                req.session.user = user;
                //console.log(req.session);
