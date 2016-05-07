@@ -194,7 +194,15 @@ function savespeaker() {
     makespeakerbutton(speaker)
     
 }
-function loadprofiledata() {
+function deletespeaker() {
+    id = document.note.speakertwitter.value.replace(' ','_')
+    var speakerbutton = document.getElementById(id);
+    
+    if (speakerbutton) {
+        speakerbutton.parentNode.removeChild(speakerbutton);
+    }
+    
+}function loadprofiledata() {
     if (this.readyState === 4) {
         var data = JSON.parse(this.responseText);
         console.log(data);
@@ -271,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
       </div>
     </div>
-    <input name="speakerhandle" value="waxpancake" type='text' />
+    <input name="speakerhandle" placeholder="lookup a twitter handle here" type='text' />
 	<input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
     <ul id="speakerlist"></ul>
     <div class='row'>
@@ -284,11 +292,14 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class='col col-lg-3'>
         <input name="speakername" value="Kevin Marks" type='text' />
       </div>
-      <div class='col col-lg-4'>
+      <div class='col col-lg-3'>
         <input type='text' name="speakerurl" value="http://epeus.blogspot.com">
       </div>
       <div class='col col-lg-2'>
         <input type="button" class='btn' value="Save Speaker" onclick="savespeaker()" > 
+      </div>
+      <div class='col col-lg-1'>
+        <input type="button" class='btn' value="Delete" onclick="deletespeaker()" > 
       </div>
     </div>
      <div class='row'>
