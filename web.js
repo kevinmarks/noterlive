@@ -98,7 +98,7 @@ app.post('/auth/indie', function(req, res, next) {
 });
 
 app.get('/sendtweet', function(req, res, next) {
-    console.log("sendtweet: " + req.query.status + twitter.hasAuth);
+    //console.log("sendtweet: " + req.query.status + twitter.hasAuth);
 	twitter.setAuth ( 
         consumerKey,
         consumerSecret, 
@@ -107,7 +107,7 @@ app.get('/sendtweet', function(req, res, next) {
     );
 	if ( twitter.hasAuth() ) {
 	   twitter.post('statuses/update',{'status':req.query.status}, function( tweet, error, status ){
-					console.log( tweet ? 'posted as @'+tweet.user.screen_name : status+" "+error.message );               
+					//console.log( tweet ? 'posted as @'+tweet.user.screen_name : status+" "+error.message );               
 				   res.send(tweet ? "<a href='https://twitter.com/" +tweet.user.screen_name+"/status/"+
 						tweet.id_str+"'>"+tweet.text+"</a>":status+ + error.message );
 				} );
