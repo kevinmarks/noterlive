@@ -134,13 +134,13 @@ function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
     speakerHTML = getSpeakerHTML();
     if (speakerHTML == lastSpeakerHTML) {
-        speakerHTML = ""; // don't repeat for each line
+        speakerHTML = "<p>"; // a new paragraph inside the blockquote
     } else {
         if (lastSpeakerHTML != "") { speakerHTML = "</blockquote></div>\n" + speakerHTML; }
         speakerHTML = speakerHTML + " <blockquote class='e-content'><p>";
         lastSpeakerHTML = getSpeakerHTML();
     }            
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + auto_link(document.note.quote.value, true);
+    document.note.blogpost.value = document.note.blogpost.value + "\n" +speakerHTML + auto_link(document.note.quote.value, true);
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
