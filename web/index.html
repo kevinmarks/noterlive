@@ -142,7 +142,10 @@ function postit() {
     }            
     document.note.blogpost.value = document.note.blogpost.value + "\n" +speakerHTML + auto_link(document.note.quote.value, true);
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
-    document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
+    var firstlink = document.getElementById('tweet').contentDocument.getElementsByTagName("a")[0]
+    var lastid = "0";
+    if (firstlink) {lastid= firstlink.href.split('/').pop();}
+    document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value)+"&lastid="+encodeURIComponent(lastid);
     document.note.quote.value = "";
     noteit(); //fix counter and button colour
     storeLocal();
@@ -265,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
      
     </div>
   </div>
- <iframe id="tweet" class='hidden' src=""></iframe>
+ <iframe id="tweet" class='hidden' allow-same-origin="true" src=""></iframe>
   <div id="error"> </div>    
     <div class='row'>
 <input type="checkbox" id="hovercards" name="hovercards"><label>add hovercards to html</label></input>
