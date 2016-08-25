@@ -1,0 +1,26 @@
+div .notercite {display:webkit-flex; display:flex;}
+
+.hovercard{
+	position: relative;
+}
+
+.hovercard .hidden-info{
+	opacity: 0;
+	max-height: 0;
+	max-width: 0;
+	overflow: hidden;
+	position: absolute;
+	top: 1.5em;
+	left: 0;
+	z-index:1;
+}
+
+.hovercard:hover .hidden-info{
+	border: #999 solid 1px;
+	box-shadow: 0 0 1em #999;
+	padding: 0.5em;
+	background: #fcfcfc;
+	opacity: 1;
+	max-height: 20em;
+	max-width: 20em;
+}
