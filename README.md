@@ -5,6 +5,9 @@ A tool for indieweb live noting (aka live tweeting/live blogging).
 
 To try it go to http://www.noterlive.com
 
+# Instructions #
+See: [Noter Live Instruction Manual](https://github.com/kevinmarks/noterlive/wiki/Noter-Live-Instruction-Manual)
+
 TO DO
 =====
 add a logout button for twitter
