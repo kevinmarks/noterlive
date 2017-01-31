@@ -159,11 +159,14 @@ function changespeakerinfo() {
     document.note.speakertwitter.value = '@' + handle;
 }
 function makespeakerbutton(speaker) {
-    id = speaker.twitter.replace(' ','_')
-    if (!document.getElementById(id)) {
+    var id = speaker.twitter.trim().replace(/\s/g,'_')
+    if (id =="" ) {
+        id = speaker.name.trim().replace(/\s/g,'_')
+    }
+    if (id && !document.getElementById(id)) {
         var button = document.createElement("input");
         button.type = "button";
-        button.value = speaker.twitter;
+        button.value = id;
         button.id = id;
         button.setAttribute('onclick', 'setspeaker(' + JSON.stringify(speaker) +');');
         document.getElementById('speakerlist').appendChild(button);
@@ -198,7 +201,10 @@ function savespeaker() {
     
 }
 function deletespeaker() {
-    id = document.note.speakertwitter.value.replace(' ','_')
+    var id = document.note.speakertwitter.value.trim().replace(/\s/g,'_')
+    if (id =="" ) {
+        id = document.note.speakername.value.trim().replace(/\s/g,'_')
+    }
     var speakerbutton = document.getElementById(id);
     
     if (speakerbutton) {
