@@ -8,6 +8,9 @@ To try it go to http://www.noterlive.com
 # Instructions #
 See: [Noter Live Instruction Manual](https://github.com/kevinmarks/noterlive/wiki/Noter-Live-Instruction-Manual)
 
+For those wishing to properly display the available hovercard output on their websites, they should include the [javascript file](https://github.com/kevinmarks/noterlive/blob/master/web/hovercards.js) included in the repository in their root web folder and ensure that the displaying webpage includes `<script src="/hovercards.js"></script>`. One will also need to include appropriate CSS for displaying these cards, a possible sample can be found in `/resources/noterlive.css`.
+
+
 TO DO
 =====
 add a logout button for twitter
