@@ -89,6 +89,20 @@ function recoverLocal( screenname ) {
 	document.getElementById( 'speakerlist' ).innerHTML = forStorage.speakerlink;
 	lastSpeakerHTML = forStorage.lastSpeakerHTML;
 }
+function clearLogs() {
+	var fields = ['blogpost','archive'];
+	for ( var i=0,l=fields.length; i<l; i++ ) {
+	    document.note[fields[i]].value = "";
+	}
+
+	document.getElementById( 'preview' ).innerHTML ="";
+}
+function clearSpeakers() {
+	document.getElementById( 'speakerlist' ).innerHTML ="";
+}
+function clearThread() {
+    document.getElementById("tweet").src="";
+}
 
 function clearLocal() {
 	if ( false == localstoragemustard ) {
@@ -142,8 +156,13 @@ function postit() {
     }            
     document.note.blogpost.value = document.note.blogpost.value + "\n" +speakerHTML + auto_link(document.note.quote.value, true);
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
-    var firstlink = document.getElementById('tweet').contentDocument.getElementsByTagName("a")[0]
     var lastid = "0";
+    var firstlink = null;
+    try {
+       firstlink = document.getElementById('tweet').contentDocument.getElementsByTagName("a")[0]
+    } catch (except) {
+        console.log("no tweet iframe" + except);
+    }
     if (firstlink) {lastid= firstlink.href.split('/').pop();}
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value)+"&lastid="+encodeURIComponent(lastid);
     document.note.quote.value = "";
@@ -379,7 +398,10 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 	<div class="row">
 		<div class="col col-lg-12">
-			<input type="button" class='btn' value="Clear speakers and logs" onclick="clearLocal(); location.reload(); return false;" > 
+			<input type="button" class='btn' value="Clear speakers" onclick="clearSpeakers(); return false;" > 
+			<input type="button" class='btn' value="Clear logs" onclick="clearLogs(); return false;" > 
+			<input type="button" class='btn' value="New thread" onclick="clearThread(); return false;" > 
+			<input type="button" class='btn' value="Clear everything" onclick="clearLocal(); location.reload(); return false;" > 
 		</div>
 	</div>
   </form>
