@@ -1,224 +1,21 @@
-﻿<html dir="ltr">
+﻿<!DOCTYPE html>
+<html>
 <head><title>Noter direct</title>
-<meta charset="utf-8"></meta>
-<link href="bootstrap.css" rel="stylesheet" type="text/css" media="all"></link>
-<link rel="shortcut icon" href="noterlive.png"></link>
-<link rel="apple-touch-icon" href="noterlive.png"></link>
-<meta name="mobile-web-app-capable" content="yes"></meta>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-<link type="text/css" rel="stylesheet" href="tweetembed.css"></link>
-<link type="text/css" rel="stylesheet" href="hovercard.css"></link>
+<meta charset="utf-8">
+<link href="bootstrap.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="shortcut icon" href="noterlive.png" />
+<link rel="apple-touch-icon" href="noterlive.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link type="text/css" rel="stylesheet" href="tweetembed.css">
+<link type="text/css" rel="stylesheet" href="hovercard.css">
 <script src="cassis.js"></script>
 <script src="hovercards.js"></script>
-<script>
-var lastSpeakerHTML = "";
-var localstoragemustard = supports_html5_storage();
-function supports_html5_storage() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
-}
+<script src="noterlive.js"></script>
 
+<style type='text/css'>
 
-
-function storeLocal () {
-	if ( false == localstoragemustard ) {
-		return;
-	}
-	
-	var forStorage = {
-		screenname: document.querySelector("#profilename").innerText,
-		lastSpeakerHTML: lastSpeakerHTML,
-		blogpost: document.note.blogpost.value,
-		archive: document.note.archive.value,
-		hashtag: document.note.hashtag.value,
-		speakerhandle: document.note.speakerhandle.value,
-		speakertwitter: document.note.speakertwitter.value,
-		speakername: document.note.speakername.value,
-		speakerurl: document.note.speakerurl.value,
-		speakerlink: document.getElementById( 'speakerlist' ).innerHTML
-	}
-	
-	var forStorageString = JSON.stringify( forStorage );
-	
-	localStorage.setItem( 'noterliver', forStorageString );
-}
-
-function recoverLocal( screenname ) {
-	if ( false == localstoragemustard ) {
-		return;
-	}
-	
-	var forStorageString = localStorage.getItem( 'noterliver' );
-
-	if ( null == forStorageString ) {
-		// got nothin' for you
-		return;
-	}
-	
-	var forStorage = JSON.parse( forStorageString );
-
-	if ( screenname != forStorage.screenname ) {
-		// no longer correct
-		clearLocal();
-		// head back to camp
-		return;
-	}
-	
-		
-	var fields = ['blogpost','archive','hashtag','funk','speakerhandle','speakertwitter','speakername','speakerurl'];
-	
-	for ( var i=0,l=fields.length; i<l; i++ ) {
-		console.log( 'fields', fields[i] );
-		
-		if ( typeof forStorage[fields[i]] == 'undefined' ) {
-			continue;
-		}
-		
-		if ( typeof document.note[fields[i]] == 'undefined' ) {
-			continue;
-		}
-		
-		
-		document.note[fields[i]].value = forStorage[fields[i]];
-	}
-	
-	document.getElementById( 'speakerlist' ).innerHTML = forStorage.speakerlink;
-	lastSpeakerHTML = forStorage.lastSpeakerHTML;
-}
-
-function clearLocal() {
-	if ( false == localstoragemustard ) {
-		return;
-	}
-	
-	localStorage.removeItem( 'noterliver' );
-}
-
-
-
-function noteit() {
-    var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +": " :" ";
-    document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
-    var rawcount = strlen(document.note.composed.value);
-    var munged = tw_text_proxy(document.note.composed.value);
-    var mungleft = 140-strlen(munged);
-    var countElement= document.getElementById("charcount");
-    var countColour = "black";
-    
-    countElement.innerHTML = mungleft;
-    document.getElementById("tweetpre").innerHTML = munged.slice(0,140)
-    if (mungleft<15) { countColour = "maroon";} 
-    if (mungleft<5) { countColour = "darkorange";} 
-    if (mungleft<0) { countColour = "red";} 
-    countElement.style.backgroundColor = countColour;
-    document.getElementById("notebutton").style.backgroundColor = countColour;
-}
-function getSpeakerHTML() {
-    addHovercard = document.getElementById("hovercards").checked
-    html = "<div class='notercite h-cite'>";
-    if (addHovercard) {
-        html = html+"<span class='hovercard'>";
-    }
-    html = html +"<a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + "</a>";
-     if (addHovercard) {
-    html = html+"<iframe class='u-hovercard hidden-info' height=128 width=256 src='http://www.unmung.com/hovercard?url=" + encodeURIComponent(document.note.speakerurl.value) +"'></iframe></span>";
-    }
-    html = html+": ";
-    return html
-}
-function postit() {
-    document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
-    speakerHTML = getSpeakerHTML();
-    if (speakerHTML == lastSpeakerHTML) {
-        speakerHTML = ""; // don't repeat for each line
-    } else {
-        if (lastSpeakerHTML != "") { speakerHTML = "</blockquote></div>\n" + speakerHTML; }
-        speakerHTML = speakerHTML + " <blockquote class='e-content'><p>";
-        lastSpeakerHTML = getSpeakerHTML();
-    }            
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + auto_link(document.note.quote.value, true);
-    document.getElementById("preview").innerHTML = document.note.blogpost.value;
-    document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
-    document.note.quote.value = "";
-    noteit(); //fix counter and button colour
-    storeLocal();
-}
-function changespeakerinfo() {
-    handle=document.note.speakerhandle.value;
-        req = new XMLHttpRequest();
-        req.onreadystatechange = function() {foundspeaker();};
-        req.open("GET", '/lookupspeaker?handle=' + handle, true);
-        req.send(null);
-    document.note.speakertwitter.value = '@' + handle;
-}
-function makespeakerbutton(speaker) {
-    id = speaker.twitter.replace(' ','_')
-    if (!document.getElementById(id)) {
-        var button = document.createElement("input");
-        button.type = "button";
-        button.value = speaker.twitter;
-        button.id = id;
-        button.setAttribute('onclick', 'setspeaker(' + JSON.stringify(speaker) +');');
-        document.getElementById('speakerlist').appendChild(button);
-    }
-}
-function foundspeaker() {
-   // only if req is "loaded"
-   if (req.readyState == 4) {
-       // only if "OK"
-       if (req.status == 200 || req.status == 304) {
-           //document.getElementById('error').innerHTML=req.responseText;
-           speaker = JSON.parse(req.responseText);
-           setspeaker(speaker);
-           makespeakerbutton(speaker)
-        } else {
-           document.getElementById('error').innerHTML="ahah error:\n" +
-               req.statusText;
-       }
-   }
-}
-function setspeaker(speaker) {
-    document.note.speakertwitter.value = speaker.twitter;
-    document.note.speakerurl.value = speaker.url ? speaker.url : "https://twitter.com/"+ speaker.twitter;
-    document.note.speakername.value = speaker.name ? speaker.name : speaker.twitter ;
-}
-function savespeaker() {
-    speaker= {};
-    speaker.twitter = document.note.speakertwitter.value;
-    speaker.url = document.note.speakerurl.value;
-    speaker.name = document.note.speakername.value;
-    makespeakerbutton(speaker)
-    
-}
-function loadprofiledata() {
-    if (this.readyState === 4) {
-        var data = JSON.parse(this.responseText);
-        console.log(data);
-        document.querySelector("#profileimage").src = data.profileImage;
-        document.querySelector("#profilename").innerText = '@' +data.screenName;
-        document.querySelector("#profileimage2").src = data.profileImage;
-        document.querySelector("#profilename2").innerText = '@' +data.screenName;
-        document.querySelector("#profilefullname").innerText = data.fullName;
-        document.querySelector("#profile").classList.remove('hidden');
-        // Hide login button
-        document.querySelector("a[href='/auth/twitter']").classList.add('hidden');
-        document.querySelector("a[href='/auth/twitterlogout']").classList.remove('hidden');
-		recoverLocal( '@' + data.screenName );
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    var req = new XMLHttpRequest();
-    req.open("GET", "/showuser", true);
-    req.onreadystatechange = loadprofiledata;
-    req.send();
-});
-</script>
-
-<style type="text/css">.row {
+.row {
   padding-bottom: 15px;
 }
 .hidden {
@@ -239,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="navbar">
     <div class="container">
       <h1><img id="logo" src="noterlive.svg" width="48px" style="float:left"> <a class="navbar-brand" href="#">Noter Live</a></h1>
+		<a href="/index.html">English version</a>
 		<form name="indieauth" class="hidden" method="post" action="/auth/indie">
 			  <div class="col col-lg-2"><span>votre url:</span></div>
 			  <div class="col col-lg-4"><input type="url" name="yoururl"></div>   
@@ -254,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
      
     </div>
   </div>
- <iframe id="tweet" class="hidden" src=""></iframe>
+ <iframe id="tweet" class='hidden' allow-same-origin="true" src=""></iframe>
   <div id="error"> </div>    
     <div class="row">
 <input type="checkbox" id="hovercards" name="hovercards"><label>ajouter hovercards html</label>
@@ -268,30 +66,40 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
       </div>
     </div>
-    <input name="speakerhandle" value="waxpancake" type="text">
-	<input type="button" class="btn" value="Changez Orateur" onclick="changespeakerinfo()"> 
+    <div class='row'>
+      <div class='col col-lg-6'>
+		<input name="speakerhandle" placeholder="Rechercher un nom de twitter ici" type='text' />
+	  </div>
+      <div class='col col-lg-3'>
+		<input type="button" class='btn' value="Changez Orateur" onclick="changespeakerinfo()" >
+	  </div>
+	</div> 
     <ul id="speakerlist"></ul>
     <div class="row">
       <div class="col col-lg-3">
         <div class="input-group">
           <span class="input-group-addon input">@</span>
-          <input name="speakertwitter" value="kevinmarks" type="text">
+          <input name="speakertwitter" value="@kevinmarks" type="text">
         </div>
       </div>
       <div class="col col-lg-3">
         <input name="speakername" value="Kevin Marks" type="text">
       </div>
-      <div class="col col-lg-4">
-        <input type="text" name="speakerurl" value="http://epeus.blogspot.com">
+      <div class='col col-lg-3'>
+        <input type='text' name="speakerurl" value="http://kevinmarks.com">
       </div>
-      <div class="col col-lg-2">
-        <input type="button" class="btn" value="Sauvez Orateur" onclick="savespeaker()"> 
+      <div class='col col-lg-2'>
+        <input type="button" class='btn' value="Sauvez Orateur" onclick="savespeaker()" > 
+      </div>
+      <div class='col col-lg-1'>
+        <input type="button" class='btn' value="Supprimer" onclick="deletespeaker()" > 
       </div>
     </div>
-     <div class="row">
-      <div class="col col-lg-12">
-        <div class="input-group">
-          <input type="search" name="quote" placeholder="type the speaker&#39;s brilliant quote here" oninput="noteit()" onchange="noteit()" onkeydown="if (event.keyCode == 13) { postit(); return false; }">
+     <div class='row'>
+      <div class='col col-lg-12'>
+        <div class='input-group'>
+          <input type="search" name="quote" placeholder="Tapez la citation brillante de l'orateur ici" oninput="noteit()" onchange="noteit()" 
+              onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
               <span class="input-group-btn">
                 <input id="notebutton" type="button" class="btn btn-default" value="Notez" onclick="postit()">
               </span>
@@ -304,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <span class="label" id="charcount">0</span>
       </div>
     </div>
-<div id="fakeiframe" style="font-family:&#39;Helvetica Neue&#39;,Helvetica,sans-serif;font-size:14;border:none;max-width:100%;min-width:220px;margin:10px 0px;padding:0px;display:block;position:static;width:500px">
+<div id="fakeiframe" style="font-family: 'Helvetica Neue', Helvetica, sans-serif; font-size:14; border: none; max-width: 100%; min-width: 220px; margin: 10px 0px; padding: 0px; display: block; position: static; visibility: visible; width: 500px;">
 
 <div class="EmbeddedTweet decider-tapOpensPermalink  twitter-tweet not-touch">
 
@@ -355,7 +163,10 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 	<div class="row">
 		<div class="col col-lg-12">
-			<input type="button" class="btn" value="Effacez Orateurs et le journal" onclick="clearLocal(); location.reload(); return false;"> 
+			<input type="button" class='btn' value="Effacez Orateurs" onclick="clearSpeakers(); return false;" > 
+			<input type="button" class='btn' value="Effacez le journal" onclick="clearLogs(); return false;" > 
+			<input type="button" class='btn' value="Nouveau fil" onclick="clearThread(); return false;" > 
+			<input type="button" class='btn' value="Effacer tout" onclick="clearLocal(); location.reload(); return false;" > 
 		</div>
 	</div>
   </form>
