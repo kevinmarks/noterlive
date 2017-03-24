@@ -307,8 +307,14 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
       </div>
     </div>
-    <input name="speakerhandle" placeholder="lookup a twitter handle here" type='text' />
-	<input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" > 
+    <div class='row'>
+      <div class='col col-lg-6'>
+		<input name="speakerhandle" placeholder="lookup a twitter handle here" type='text' />
+	  </div>
+      <div class='col col-lg-3'>
+		<input type="button" class='btn' value="Change Speaker" onclick="changespeakerinfo()" >
+	  </div>
+	</div> 
     <ul id="speakerlist"></ul>
     <div class='row'>
       <div class='col col-lg-3'>
