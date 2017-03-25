@@ -43,7 +43,7 @@
 			  <div class="col col-lg-2"><input type="submit" name="signin" value="se connecter"></div>       
 		</form>
       <div class="pull-right">
-	 <a class="btn btn-info pull-right" href="/auth/twitter">Connectez avec Twitter</a>
+	 <a class="btn btn-info pull-right" href="/auth/twitter">Connecter avec Twitter</a>
 	 <div id="profile" class="hidden">
 	   <img id="profileimage" src=""> connecté en tant que <span id="profilename"></span>
 	 </div>
@@ -68,10 +68,10 @@
     </div>
     <div class='row'>
       <div class='col col-lg-6'>
-		<input name="speakerhandle" placeholder="Rechercher un nom de twitter ici" type='text' />
+		<input name="speakerhandle" placeholder="Rechercher un pseudo de twitter ici" type='text' />
 	  </div>
       <div class='col col-lg-3'>
-		<input type="button" class='btn' value="Changez Orateur" onclick="changespeakerinfo()" >
+		<input type="button" class='btn' value="Changer Intervenant" onclick="changespeakerinfo()" >
 	  </div>
 	</div> 
     <ul id="speakerlist"></ul>
@@ -89,7 +89,7 @@
         <input type='text' name="speakerurl" value="http://kevinmarks.com">
       </div>
       <div class='col col-lg-2'>
-        <input type="button" class='btn' value="Sauvez Orateur" onclick="savespeaker()" > 
+        <input type="button" class='btn' value="Sauver Intervenant" onclick="savespeaker()" > 
       </div>
       <div class='col col-lg-1'>
         <input type="button" class='btn' value="Supprimer" onclick="deletespeaker()" > 
@@ -98,10 +98,10 @@
      <div class='row'>
       <div class='col col-lg-12'>
         <div class='input-group'>
-          <input type="search" name="quote" placeholder="Tapez la citation brillante de l'orateur ici" oninput="noteit()" onchange="noteit()" 
+          <input type="search" name="quote" placeholder="Insérer la citation de l'intervenant ici" oninput="noteit()" onchange="noteit()" 
               onkeydown="if (event.keyCode == 13) { postit(); return false; }" >
               <span class="input-group-btn">
-                <input id="notebutton" type="button" class="btn btn-default" value="Notez" onclick="postit()">
+                <input id="notebutton" type="button" class="btn btn-default" value="Noter" onclick="postit()">
               </span>
             </div>
       </div>
@@ -163,8 +163,8 @@
     </div>
 	<div class="row">
 		<div class="col col-lg-12">
-			<input type="button" class='btn' value="Effacez Orateurs" onclick="clearSpeakers(); return false;" > 
-			<input type="button" class='btn' value="Effacez le journal" onclick="clearLogs(); return false;" > 
+			<input type="button" class='btn' value="Effacer Intervenants" onclick="clearSpeakers(); return false;" > 
+			<input type="button" class='btn' value="Effacer le journal" onclick="clearLogs(); return false;" > 
 			<input type="button" class='btn' value="Nouveau fil" onclick="clearThread(); return false;" > 
 			<input type="button" class='btn' value="Effacer tout" onclick="clearLocal(); location.reload(); return false;" > 
 		</div>
