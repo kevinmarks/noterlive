@@ -101,16 +101,17 @@ function clearLocal() {
 
 
 function noteit() {
+    var maxLength = 280;
     var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +": " :" ";
     document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
     var rawcount = strlen(document.note.composed.value);
     var munged = tw_text_proxy(document.note.composed.value);
-    var mungleft = 140-strlen(munged);
+    var mungleft = maxLength-strlen(munged);
     var countElement= document.getElementById("charcount");
     var countColour = "black";
     
     countElement.innerHTML = mungleft;
-    document.getElementById("tweetpre").innerHTML = munged.slice(0,140)
+    document.getElementById("tweetpre").innerHTML = munged.slice(0,maxLength)
     if (mungleft<15) { countColour = "maroon";} 
     if (mungleft<5) { countColour = "darkorange";} 
     if (mungleft<0) { countColour = "red";} 
