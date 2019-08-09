@@ -1,8 +1,10 @@
 /* <!--
-   cassis.js Copyright 2008-2013 Tantek Çelik http://tantek.com 
+   cassis.js Copyright 2008-2019 Tantek Çelik http://tantek.com/ 
    http://cassisproject.com conceived:2008-254; created:2009-299;
-   license:http://creativecommons.org/licenses/by-sa/3.0/         -->
-if you see this in the browser, you need to wrap your PHP include of cassis.js and use thereof with calls to ob_start and ob_end_clean, e.g.:
+   license: https://creativecommons.org/licenses/by-sa/4.0/       -->
+if you see this or "/// var" in the browser, you need to 
+wrap your PHP include of cassis.js and use of functions therein 
+with calls to ob_start and ob_end_clean, e.g.:
 ob_start(); 
 include 'cassis.js'; 
 // your code that calls CASSIS functions goes here
@@ -42,8 +44,15 @@ function date_get_full_year($d = "") {
   return $d->format('Y');
 } 
 
-function date_get_timestamp($d) { 
+function date_get_timestamp($d = "") {
+  if ($d == "") {
+    $d = new DateTime();
+  }
   return $d->format('U'); // $d->getTimestamp(); // in PHP 5.3+
+}
+
+function date_get_ordinal_days($d) {
+ return 1 + $d->format('z');
 }
 
 // mixed-case function names are bad for PHP vs JS. Don't do it.
@@ -51,6 +60,9 @@ function date_get_timestamp($d) {
 //  return $n-0;
 //}
 
+function date_get_rfc3339($d) {
+  return $d->format('c');
+}
 
 // -------------------------------------------------------------------
 // old wrappers. transition code away from these
@@ -124,6 +136,10 @@ function ctype_digit(s) {
   return (/^[0-9]+$/).test(s);
 }
 
+function ctype_lower(s) {
+ return (/^[a-z]+$/).test(s);
+}
+
 function ctype_space(s) {
  return /\s/.test(s);
 }
@@ -132,9 +148,8 @@ function ctype_space(s) {
 // date time functions
 
 function date_create(s) {
-  var d = new Date();
-  d.parse(s);
-  return d;
+  if (s) return new Date(s);
+  else return new Date();
 }
 
 function date_get_full_year(d) {
@@ -146,6 +161,21 @@ function date_get_full_year(d) {
 
 function date_get_timestamp(d) {
   return floor(d.getTime() / 1000);
+}
+
+function date_get_rfc3339($d) {
+  return strcat($d.getFullYear(),'-',
+                str_pad_left(1 + $d.getUTCMonth(), 2, "0"), '-',
+                str_pad_left($d.getDate(), 2, "0"), 'T',
+                str_pad_left($d.getUTCHours(), 2, "0"), ':',
+                str_pad_left($d.getUTCMinutes(), 2, "0"), ':',
+                str_pad_left($d.getUTCSeconds(), 2, "0"), 'Z');
+}
+
+// newcal
+
+function date_get_ordinal_days($d) {
+  return ymdp_to_d($d.getFullYear(), 1 + $d.getMonth(), $d.getDate());
 }
 
 
@@ -184,6 +214,16 @@ function strpos(h, n, o) {
   else { return o; }
 }
 
+function stripos(h, n, o) {
+  // clients must triple-equal test return for === false for no match!
+  if (arguments.length === 2) {
+    o = 0;
+  }
+  o = h.toLowerCase().indexOf(n.toLowerCase(), o);
+  if (o === -1) { return false; }
+  else { return o; }
+}
+
 function strncmp(s1, s2, n) {
   s1 = substr(String(s1), 0, n);
   s2 = substr(String(s2), 0, n);
@@ -217,7 +257,24 @@ function htmlspecialchars(s) {
 }
 
 function str_ireplace(a, b, s) {
-  return s.replace(new RegExp(a, "gi"), b);
+ var i;
+ if (!is_array(a)) {
+   return s.replace(new RegExp(a, "gi"), is_array(b) ? b[0] : b);
+ }
+ else {
+   for (i=0; i<a.length; i++) {
+     s = s.replace(new RegExp(a[i], "gi"), is_array(b) ? b[i] : b);
+   }
+   return s;
+ }
+}
+
+function preg_match(p, s) {
+  return (s.match(trim_slashes(p)) ? 1 : 0);
+}
+
+function preg_split(p, s) {
+  return s.split(new RegExp(trim_slashes(p),"gi"));
 }
 
 function trim() {
@@ -265,6 +322,10 @@ function strtolower(s) {
   return s.toLowerCase();
 }
 
+function ucfirst(s) {
+  return s.charAt(0).toUpperCase() + substr(s, 1);
+}
+
 // -------------------------------------------------------------------
 // more javascript-only php-equivalent functions here 
 
@@ -296,6 +357,13 @@ function js() {
 /// ?> <!--   ///
 // -------------------------------------------------------------------
 // javascript-only framework functions
+function targetelement(e) {
+  var t;
+  e = e ? e : window.event;
+  t = e.target ? e.target : e.srcElement;
+  t = (t.nodeType == 3) ? t.parentNode : t; // Safari workaround
+  return t;
+}
 
 function doevent(el, evt) {
   if (evt==="click" && el.tagName==='A') {
@@ -313,19 +381,20 @@ function doevent(el, evt) {
   }
 }
 
-function targetelement(e) {
-  var t;
-  e = e ? e : window.event;
-  t = e.target ? e.target : e.srcElement;
-  t = (t.nodeType == 3) ? t.parentNode : t; // Safari workaround
-  return t;
+
+// CommonJS (node, browserify, npm) Exports
+if (typeof exports !== 'undefined' &&
+    typeof module !== 'undefined' && module.exports) {
+  exports.auto_link = auto_link;
+  exports.num_to_sxg = num_to_sxg;
+  exports.sxg_to_num = sxg_to_num;
 }
 
 /// --> <?php ///
 
 
 // -------------------------------------------------------------------
-// character and string functions 
+// character and string functions
 
 // strcat: takes as many strings as you want to give it.
 function strcat() {         /// ?> <!--   ///
@@ -438,6 +507,10 @@ function ctype_email_local($s) {
  return (preg_match("/^[a-zA-Z0-9_%+-]+$/", $s));
 }
 
+function ctype_uri_scheme($s) {
+ return (preg_match("/^[a-zA-Z][a-zA-Z0-9+.-]*$/", $s));
+}
+
 // -------------------------------------------------------------------
 // newbase60
 
@@ -452,9 +525,15 @@ function num_to_sxg($n) { /// ?> <!--   ///
     $p = "-";
   }
   while ($n>0) {
-    $d = $n % 60;
-    $s = strcat($m[$d], $s);
-    $n = ($n-$d)/60;
+    if(!js() && function_exists('bcmod')) {
+      $d = bcmod($n, 60);
+      $s = $m[$d] . $s;
+      $n = bcdiv(bcsub($n, $d), 60);
+    } else {
+      $d = $n % 60;
+      $s = strcat($m[$d], $s);
+      $n = ($n-$d)/60;
+    }
   }
   return strcat($p, $s);
 }
@@ -475,7 +554,7 @@ function sxg_to_num($s) { /// ?> <!--   ///
     $s = substr($s, 1, $j);
   }
   for ($i=0; $i<$j; $i+=1) { // iterate from first to last char of $s
-    $c = ord($s[$i]); //  put current ASCII of char into $c  
+    $c = ord($s[$i]); //  put current ASCII of char into $c
     if ($c>=48 && $c<=57) { $c=$c-48; }
     else if ($c>=65 && $c<=72) { $c-=55; }
     else if ($c===73 || $c===108) { $c=1; } // typo cap I lower l to 1
@@ -486,7 +565,11 @@ function sxg_to_num($s) { /// ?> <!--   ///
     else if ($c>=97 && $c<=107) { $c-=62; }
     else if ($c>=109 && $c<=122) { $c-=63; }
     else { break; } // treat all other noise as end of number
-    $n = 60*$n + $c;
+    if(!js() && function_exists('bcadd')) {
+      $n = bcadd(bcmul(60, $n), $c);
+    } else {
+      $n = 60*$n + $c;
+    }
   }
   return $n*$m;
 }
@@ -513,13 +596,14 @@ function sxgtonum($s) {
 function sxgtonumf($s, $f) {
   return sxg_to_numf($s, $f);
 }
+/* == end compat functions == */
 
 // -------------------------------------------------------------------
 // date and time
 
 function date_create_ymd($s) { /// ?> <!--   ///
   var $d;                      /// --> <?php ///
-  if ($s === 0) {
+  if (!$s) {
     return (js() ? new Date() : new DateTime());
   }
   if (js()) { 
@@ -544,19 +628,27 @@ function date_create_timestamp($s) {
 
 // function date_get_timestamp($d) // in PHP/JS specific code above.
 
-function date_get_rfc3339($d) {
-  if (js()) {
-    return strcat($d.getFullYear(), '-',
-                  str_pad_left(1+$d.getUTCMonth(), 2, "0"), '-',
-                  str_pad_left($d.getDate(), 2, "0"), 'T',
-                  str_pad_left($d.getUTCHours(), 2, "0"), ':',
-                  str_pad_left($d.getUTCMinutes(), 2, "0"), ':',
-                  str_pad_left($d.getUTCSeconds(), 2, "0"), 'Z');
-  } else {
-    return date_format($d, 'c');
+// function date_get_rfc3339($d) // in PHP/JS specific code above.
+
+function dt_to_time($dt) {
+  $dt = explode("T", $dt);
+  if (count($dt)==1) {
+    $dt = explode(" ", $dt);
   }
+  return (count($dt)>1) ? $dt[1] : "0:00";
 }
 
+function dt_to_date($dt) {
+  $dt = explode("T", $dt);
+  if (count($dt)==1) {
+    $dt = explode(" ", $dt);
+  }
+  return $dt[0];
+}
+
+function dt_to_ordinal_date($dt) {
+  return ymd_to_yd(dt_to_date($dt));
+}
 
 // -------------------------------------------------------------------
 // newcal
@@ -594,13 +686,7 @@ function ymd_to_yd($d) {
   }
 }
 
-function date_get_ordinal_days($d) {
-  if (js()) {
-    return ymdp_to_d($d.getFullYear(), 1+$d.getMonth(), $d.getDate());
-  } else {
-    return 1+date_format($d, 'z');
-  }
-}
+// function date_get_ordinal_days($d) // in PHP/JS specific code above
 
 function bim_from_od($d) {
   return 1+floor(($d-1)/61);
@@ -671,8 +757,8 @@ function ymd_to_sdf($d, $f) {
 function ydp_to_ymd($y, $d) { /// ?> <!--   ///
   var $md, $m;                /// --> <?php ///
   $md = array(
-         array(0,31,59,90,120,151,181,212,243,273,304,334),
-         array(0,31,60,91,121,152,182,213,244,274,305,335));
+         array(0,31,59,90,120,151,181,212,243,273,304,334,365),
+         array(0,31,60,91,121,152,182,213,244,274,305,335,366));
   $d -= 1;
   $m = trunc($d / 29);
   if ($md[isleap($y) - 0][$m] > $d) $m -= 1;
@@ -784,11 +870,23 @@ function uri_clean($uri) {
                       str_ireplace("%2F", "/", rawurlencode($uri)));
 }
 
+// returns e.g. http:
 function protocol_of_uri($uri) {
+  if (offset(':', $uri) === 0) { return ""; }
   $uri = explode(':', $uri, 2);
+  if (!ctype_uri_scheme($uri[0])) { return ""; }
   return strcat($uri[0], ':');
 }
 
+// returns e.g. //ttk.me/b/4DY1?seriously=yes#ud
+function relative_uri_hash($uri) {
+  if (offset(':', $uri) === 0) { return ""; }
+  $uri = explode(':', $uri, 2);
+  if (!ctype_uri_scheme($uri[0])) { return ""; }
+  return $uri[1];
+}
+
+// returns e.g. ttk.me
 function hostname_of_uri($uri) {
   $uri = explode('/', $uri, 4);
   if (count($uri) > 2) {
@@ -800,6 +898,15 @@ function hostname_of_uri($uri) {
     return $uri;
   }   
   return '';
+}
+
+function sld_of_uri($uri) {
+  $uri = hostname_of_uri($uri);
+  $uri = explode('.', $uri);
+  if (count($uri) > 1) {
+    return $uri[count($uri) - 2];
+  }
+  return "";
 }
 
 function path_of_uri($uri) {
@@ -820,9 +927,44 @@ function path_of_uri($uri) {
   return '/';
 }
 
+function prepath_of_uri($uri) {
+  $uri = explode('/', $uri);
+  $uri = array_slice($uri, 0, 3);
+  return implode('/', $uri);
+}
+
+function segment_of_uri($n, $u) {
+   /* nth starting at 1 */
+   $u = path_of_uri($u);
+   $u = explode('/', $u);
+   if ($n>=0 && $n<count($u))
+     return $u[$n];
+   else return "";
+}
+
+function fragment_of_uri($u) {
+  if (offset('#', $u) !== 0) {
+    $u = explode('#', $u, 2);
+    return $u[1];
+  }
+  return "";
+}
+
 function is_http_uri($uri) {
-  $uri = explode(":", $uri, 2);
-  return !!strncmp($uri[0], "http", 4);
+  $uri = explode(':', $uri, 2);
+  return !!strncmp($uri[0], 'http', 4);
+}
+
+function get_absolute_uri($uri, $base) {
+  if (protocol_of_uri($uri) != "") { return $uri; }
+  if (substr($uri, 0, 2) === '//') { 
+    return strcat(protocol_of_uri($base), $uri);
+  }
+  if (substr($uri, 0, 1) === '/') {
+    return strcat(prepath_of_uri($base), $uri);
+  }
+  // TBI # relative
+  return strcat(prepath_of_uri($base), path_of_uri($base), $uri);
 }
 
 // -------------------------------------------------------------------
@@ -832,6 +974,15 @@ function webaddresstouri($wa, $addhttp) {
 }
 function uriclean($uri) { return uri_clean($uri); }
 
+
+// -------------------------------------------------------------------
+// HTTP related
+
+function is_html_type($ct) {
+  $ct = explode(';', $ct, 2);
+  $ct = $ct[0];
+  return ($ct === 'text/html' || $ct === 'application/xhtml+xml');
+}
 
 // -------------------------------------------------------------------
 // hexatridecimal
@@ -960,16 +1111,20 @@ function xp_attr_starts_with($a, $s) {
 }
 
 function xp_has_rel($s) {
-  return strcat("//*[contains(concat(' ',@rel,' '),' ", $s, " ')]");
+  return strcat("//*[@href and contains(concat(' ',@rel,' '),' ", $s, " ')]");
 }
 
 function xpr_has_rel($s) {
-  return strcat(".//*[contains(concat(' ',@rel,' '),' ", $s, " ')]");
+  return strcat(".//*[@href and contains(concat(' ',@rel,' '),' ", $s, " ')]");
 }
 
 function xpr_attr_starts_with_has_rel($a, $s, $r) {
-  return strcat(".//*[contains(concat(' ',@rel,' '),' ", $r, 
+  return strcat(".//*[@href and contains(concat(' ',@rel,' '),' ", $r, 
                 " ') and starts-with(@", $a, ",'", $s, "')]");
+}
+
+function xpr_attr_starts_with_has_class($a, $s, $c) {
+  return strcat(".//*[contains(concat(' ',@class,' '),' ", $c, " ') and starts-with(@", $a, ",'", $s, "')]");
 }
 
 // value class pattern readable date time from ISO8601 datetime
@@ -978,7 +1133,17 @@ function vcp_dt_readable($d) { /// ?> <!--   ///
   $d = explode("T", $d);
   $r = "";
   if (count($d)>1) { 
-    $r = strcat('<time class="value">', $d[1], '</time> on ');
+     $r = explode("-", $d[1]);
+     if (count($d)==1) {
+			 $r = explode("+", $d[1]);
+     }
+     if (count($d)>1) {
+       $r = strcat('<time class="value" datetime="',$d[1],'">', 
+                   $r[0],'</time> on ');
+     }
+     else {
+       $r = strcat('<time class="value">', $d[1], '</time> on ');
+     }
   }
   return strcat($r, '<time class="value">', $d[0], '</time>');
 }
@@ -997,6 +1162,9 @@ function xprhasrel($s) { return xpr_has_rel($s); }
 function xprattrstartswithhasrel($a, $s, $r) {
   return xpr_attr_starts_with_has_rel($a, $s, $r);
 }
+function xprattrstartswithhasclass($a, $s, $c) {
+  return xpr_attr_starts_with_has_class($a, $s, $c);
+}
 function vcpdtreadable($d) { return vcp_dt_readable($d); }
 
 
@@ -1013,7 +1181,7 @@ function whistle_short_path($p) {
 }
 
 // -------------------------------------------------------------------
-// falcon
+// Falcon
 
 function html_unesc_amp_only($s) {
   return str_ireplace('&amp;', '&', $s);
@@ -1086,7 +1254,7 @@ function ellipsize_to_word($s, $max, $e, $min) { /// ?> <!--   ///
     $slen -= 1;
   }
   
-  //if char immediately before ellipsis would be @$ then trim it
+  // if char immediately before ellipsis would be @$ then trim it
   if ($slen > 0 && contains('@$', $s[$slen-1])) {
     $slen-=1;
   }
@@ -1097,8 +1265,8 @@ function ellipsize_to_word($s, $max, $e, $min) { /// ?> <!--   ///
   }
 
   // trim extra whitespace before ellipsis down to one space
-  if ($slen > 2 && contains("\n ", $s[$slen-1])) {
-    while (contains("\n ", $s[$slen-2]) && $slen > 2) {
+  if ($slen > 2 && contains("\n\r ", $s[$slen-1])) {
+    while (contains("\n\r ", $s[$slen-2]) && $slen > 2) {
       --$slen;
     }
   }
@@ -1115,8 +1283,41 @@ function ellipsize_to_word($s, $max, $e, $min) { /// ?> <!--   ///
   return strcat(substr($s, 0, $slen), $e);
 }
 
+function trim_leading_urls($s) {
+  // deliberately trim URLs with explicit http: / https: from start
+  // keep schemeless URLs, @-names as expected user-visible text
+  // if empty or just space after trimming, just return original
+  $r = trim($s);
+  while (substr($r, 0, 5) == 'http:' || substr($r, 0, 6) == 'https:')
+  {
+    $ws = offset(' ', $r);
+    $rs = offset("\r", $r);
+    if ($rs == 0) { $rs = offset("\n", $r); }
+    if ($rs != 0 && $rs < $ws) { $ws = $rs; }
+    if ($ws == 0) { return $s; }
+    $r = substr($r, $ws, strlen($r)-$ws);
+  }
+  $r = trim($r);
+  return ((strlen($r) > 0) ? $r : $s);
+}
+
+function auto_space($s) {
+// replace linebreaks with <br class="auto-break"/>
+//  and one leading space with &nbsp;
+// replace "  " with " &nbsp;"
+// replace leading spaces (on a line or before spaces) with nbsp;
+  if ($s[0] === ' ') {
+    $s = strcat('&#xA0;', substr($s, 1, strlen($s)-1));
+  }
+  return str_ireplace(array("\r\n", "\r", "\n ", "\n", "  "),
+                      array("\n", "\n", '<br class="auto-break"/>&#xA0;',
+                            '<br class="auto-break"/>',
+                            ' &#xA0;'),
+                      $s);
+}
+
 function auto_link_re() {
-  return '/(?:\\@[_a-zA-Z0-9]{1,17})|(?:(?:(?:(?:http|https|irc)?:\\/\\/(?:(?:[!$&-.0-9;=?A-Z_a-z]|(?:\\%[a-fA-F0-9]{2}))+(?:\\:(?:[!$&-.0-9;=?A-Z_a-z]|(?:\\%[a-fA-F0-9]{2}))+)?\\@)?)?(?:(?:(?:[a-zA-Z0-9][-a-zA-Z0-9]*\\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|j[emop]|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|museum|m[acdeghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\\:\\d{1,5})?)(?:\\/(?:(?:[!#&-;=?-Z_a-z~])|(?:\\%[a-fA-F0-9]{2}))*)?)(?=\\b|\\s|$)/';
+  return '/(?:\\@[_a-zA-Z0-9]{1,17})(?:\\.[a-zA-Z0-9][-a-zA-Z0-9]*)*|(?:(?:(?:(?:http|https|irc)?:\\/\\/(?:(?:[!$&-.0-9;=?A-Z_a-z]|(?:\\%[a-fA-F0-9]{2}))+(?:\\:(?:[!$&-.0-9;=?A-Z_a-z]|(?:\\%[a-fA-F0-9]{2}))+)?\\@)?)?(?:(?:(?:[a-zA-Z0-9][-a-zA-Z0-9]*\\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|blog|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|(?:design|d[ejkmoz])|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|j[emop]|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|museum|m[acdeghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|(?:rocks|r[eouw])|(?:space|s[abcdeghijklmnortuvyz])|(?:tech|tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|(?:wtf|w[fs])|xyz|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\\:\\d{1,5})?)(?:\\/(?:(?:[!#&-;=?-Z_a-z~])|(?:\\%[a-fA-F0-9]{2}))*)?)(?=\\b|\\s|$)/';
   // ccTLD compressed regular expression clauses (re)created.
   // .mobi .jobs deliberately excluded to discourage layer violations.
   // see http://flic.kr/p/2kmuSL for more on the problematic new gTLDs
@@ -1127,7 +1328,9 @@ function auto_link_re() {
   // - Tantek 2010-046 (moved to auto_link_re 2012-062)
 }
 
-// auto_link: param 1: text; param 2: do embeds or not
+// auto_link: param 1: text; 
+//  optional: param 2: do embeds or not (false),
+//            param 3: do auto_links or not (true)
 // auto_link is idempotent, works on plain text or typical markup.
 function auto_link() { 
   /// ?> <!--   ///
@@ -1143,6 +1346,7 @@ function auto_link() {
   }
   $t = $args[0];
   $do_embed = (count($args) > 1) && ($args[1]!==false);
+  $do_link = (count($args) < 3) || ($args[2]!==false);
 
   $re = auto_link_re();
   $ms = preg_matches($re, $t);
@@ -1168,7 +1372,7 @@ function auto_link() {
     if ((!$spe || !preg_match('/(?:\\=[\\"\\\']?|t;)/', $spe)) &&
         substr(trim($sp[$i+1]), 0, 3)!=='</a' && 
         (!contains(
-'@charset@font@font-face@import@media@namespace@page@ABCDEFGHIJKLMNOPQ@',
+'@charset@font@font-face@import@media@namespace@page@supports@ABCDEFGHIJKLMNOPQ@',
             strcat($mi, '@')))) {
       $afterlink = '';
       $afterchar = substr($mi, -1, 1);
@@ -1181,35 +1385,51 @@ function auto_link() {
       
       $fe = 0;
       if ($do_embed) {
-        $fe = (substr($mi, -4, 1)==='.') ? 
-               substr($mi, -4, 4) :
-               substr($mi, -5, 5);
+         $fe = strtolower(
+                (substr($mi, -4, 1) === '.') ? substr($mi, -4, 4) 
+                                             : substr($mi, -5, 5));
       }
       $wmi = web_address_to_uri($mi, true);
       $prot = protocol_of_uri($wmi);
       $hn = hostname_of_uri($wmi);
       $pa = path_of_uri($wmi);
       $ih = is_http_uri($wmi);
+
+      $ahref = '<span class="figure" style="text-align:left">';
+      $enda = '</span>';
+			if ($do_link) {
+        $ahref = strcat('<a class="auto-link figure" href="',      
+                        $wmi, '">');
+        $enda = '</a>';
+      }
+
       if ($fe && 
           ($fe === '.jpeg' || $fe === '.jpg' || $fe === '.png' || 
-           $fe === '.gif')) {
-        $t = strcat($t, '<a class="auto-link figure" href="',      
-                    $wmi, '"><img src="', 
-                    $wmi, '"/></a>', 
-                    $afterlink);
+           $fe === '.gif' || $fe === '.svg')) {
+        $alt = strcat('a ',
+                      (offset('photo', $mi) != 0) ? 'photo' 
+                                                  : substr($fe, 1));
+        $t = strcat($t, $ahref, '<img class="auto-embed" alt="', 
+                    $alt, '" src="', $wmi, '"/>', $enda, $afterlink);
       } else if ($fe && 
-                 ($fe === '.mp4' || $fe === '.mov' || $fe === '.ogv'))
+                 ($fe === '.mp4' || $fe === '.mov' || 
+                  $fe === '.ogv' || $fe === '.webm'))
       {
-        $t = strcat($t, '<a class="auto-link figure" href="',      
-                    $wmi, '"><video controls="controls" src="', 
-                    $wmi, '"></video></a>', 
-                    $afterlink);
-      } else if ($ih && $hn === 'vimeo.com' 
+        $t = strcat($t, $ahref, '<video class="auto-embed" ',
+                    'controls="controls" src="', $wmi, '"></video>',
+                    $enda, $afterlink);
+      } else if ($hn === 'vimeo.com' 
                      && ctype_digit(substr($pa, 1))) {
-        $t = strcat($t, '<a class="auto-link" href="',
-                    $wmi, '">', $mi, '</a> <iframe class="vimeo-player auto-link figure" width="480" height="385" style="border:0"  src="', $prot, '//player.vimeo.com/video/', 
-                    substr($pa, 1), '"></iframe>', 
-                    $afterlink);
+				if ($do_link) {
+				  $t = strcat($t, '<a class="auto-link" href="',
+				              'https:', relative_uri_hash($wmi),
+                      '">', $mi, '</a> ');
+				}
+        if ($do_embed) {
+          $t = strcat($t, '<iframe class="vimeo-player auto-embed figure" width="480" height="385" style="border:0" src="', 'https://player.vimeo.com/video/', 
+                      substr($pa, 1), '"></iframe>', 
+                      $afterlink);
+        }
       } else if ($hn === 'youtu.be' ||
                 (($hn === 'youtube.com' || $hn === 'www.youtube.com')
                  && ($yvid = offset('watch?v=', $mi)) !== 0)) {
@@ -1219,11 +1439,17 @@ function auto_link() {
           $yvid = explode('&', substr($mi, $yvid+7));
           $yvid = $yvid[0];
         }
-        $t = strcat($t, '<a class="auto-link" href="',
-                    $wmi, '">', $mi, '</a> <iframe class="youtube-player auto-link figure" width="480" height="385" style="border:0" src="', $prot, '//www.youtube.com/embed/', 
-                    $yvid, '"></iframe>', 
-                    $afterlink);
-      } else if ($mi[0] === '@') {
+				if ($do_link) {
+  				$t = strcat($t, '<a class="auto-link" href="',
+  				            'https:', relative_uri_hash($wmi),
+                      '">', $mi, '</a> ');
+        }
+        if ($do_embed) {
+          $t = strcat($t, '<iframe class="youtube-player auto-embed figure" width="480" height="385" style="border:0"  src="', 'https://www.youtube.com/embed/', 
+                      $yvid, '"></iframe>', 
+                      $afterlink);
+        }
+      } else if ($mi[0] === '@' && $do_link && !contains($mi, '.')) {
         if ($sp[$i+1][0] === '.' && 
             $spliti != '' &&
             ctype_email_local(substr($spliti, -1, 1))) {
@@ -1232,20 +1458,41 @@ function auto_link() {
         }
         else {
           // treat it as a Twitter @-username reference and link it
-          $t = strcat($t, '<a class="auto-link h-x-username" href="',
+          $t = strcat($t, 
+                      '<a class="auto-link h-cassis-username" href="',
                       $wmi, '">', $mi, '</a>', 
                       $afterlink);
         }
-      } else {
+      } else if ($do_link) {
+        if ($mi[0] === '@') {
+          $wmi = web_address_to_uri(substr($mi, 1), true);
+        }
         $t = strcat($t, '<a class="auto-link" href="',
                     $wmi, '">', $mi, '</a>', 
                     $afterlink);
+      } else {
+        $t = strcat($t, $mi, $afterlink);
       }
     } else {
       $t = strcat($t, $mi);
     }
   }
   return strcat($t, $sp[$mlen]);
+}
+
+
+function get_auto_linked_urls($s) {
+  // in: $s result of auto_link() applied to plain text
+  // out: array of urls from hyperlinks in $s
+  
+  $s = explode('href="', $s);
+  $irtn = count($s);
+  if ($irtn < 2) { return array(); }
+  $r = array();
+  for ($i=1; $i<$irtn; $i++) {
+    $r[$i-1] = substr($s[$i], 0, offset('"', $s[$i])-1);
+  }
+  return $r;
 }
 
 
@@ -1287,7 +1534,7 @@ function get_in_reply_to_urls($s) {
           if (substr($m, 0, 6) === 'irc://') { 
             // skip it. no known use of in-reply-to an IRC URL
           } else {
-            $r[count($r)] = webaddresstouri($m, true);
+            $r[count($r)] = web_address_to_uri($m, true);
           }
         }
         $j++;
@@ -1300,7 +1547,7 @@ function get_in_reply_to_urls($s) {
 
 // Twitter POSSE support
 
-// replace URLs with http://j.mp/0011235813 to mimic Twitter's t.co
+// replace URLs with https://j.mp/0011235813 to mimic Twitter's t.co
 function tw_text_proxy() {
   /// ?> <!--   ///
   var $args, $afterchar, $afterlink, $i, $isjs,
@@ -1335,9 +1582,10 @@ function tw_text_proxy() {
       $mi = strcat($mi, '/'); // explicitly include in match
     }
     $spe = substr($spliti, -2, 2);
-    // don't proxy @-names, plain ccTLDs
-    if ($mi[0]!='@' &&
-        (substr($mi, -3, 1) !== '.' || substr_count($mi, '.') > 1)) {
+    // don't proxy @-names //, plain ccTLDs
+    if ($mi[0] !== '@' 
+      //&& (substr($mi, -3, 1) !== '.' || substr_count($mi, '.') > 1)
+        ) {
       $afterlink = '';
       $afterchar = substr($mi, -1, 1);
       while (contains('.!?,;"\')]}', $afterchar) && // trim punc @ end
@@ -1351,12 +1599,10 @@ function tw_text_proxy() {
       
       $prot = protocol_of_uri($mi);
       $proxy_url = '';
-      if ($prot === 'https:') { 
-        $proxy_url = 'https://j.mp/0011235813';
-      } else if ($prot === 'irc:') {
+      if ($prot === 'irc:') {
         $proxy_url = $mi; // Twitter doesn't tco irc: URLs
-      } else { /* 'http:/' or presumed for schemeless URLs */ 
-        $proxy_url = 'http://j.mp/0011235813';
+      } else { /* 'https:', 'http:' or presumed for schemeless URLs */ 
+        $proxy_url = 'https://j.mp/0011235813';
       }
       $t = strcat($t, $proxy_url, $afterlink);
     }
@@ -1405,14 +1651,40 @@ function tw_url_to_status_id($u) {
 // returns tweet status id string; 0 if not a tweet permalink.
   if (!$u) return 0;
   $u = explode("/", string($u)); // https:,,twitter.com,t,status,nnn
-  if ($u[2]!="twitter.com" || 
-      $u[4]!="status"      ||
+  if ($u[2] != "twitter.com" || 
+      $u[4] != "status"      ||
       !ctype_digit($u[5])) {
     return 0;
   }
   return $u[5];
 }
 
+function tw_url_to_username($u) {
+// $u - tweet permalink url
+// returns twitter username; 0 if not a tweet permalink.
+  if (!$u) return 0;
+  $u = explode("/", string($u)); // https:,,twitter.com,t,status,nnn
+  if ($u[2] != "twitter.com" || 
+      $u[4] != "status"      ||
+      !ctype_digit($u[5])) {
+    return 0;
+  }
+  return $u[3];
+}
+
+function fb_url_to_event_id($u) {
+// $u - fb event permalink url
+// returns fb event id string; 0 if not a fb event permalink.
+  if (!$u) return 0;
+  $u = explode("/", string($u)); // https:,,fb.com,events,nnn
+  if (($u[2] != "fb.com" && $u[2] != "facebook.com" && 
+       $u[2] != "www.facebook.com") || 
+      $u[3] != "events"      ||
+      !ctype_digit($u[4])) {
+    return 0;
+  }
+  return $u[4];
+}
 
 // ===================================================================
 // end CASSIS v0.1, cassis.js
